@@ -18,35 +18,32 @@ export function useVerifyOtp(): UseVerifyOtpReturn {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const verifyOtp = async (preAuthToken: string, otp: string): Promise<boolean> => {
+    const verifyOtp = (preAuthToken: string, otp: string): Promise<boolean> => {
         setIsLoading(true);
         setError(null);
 
-        try {
-            const { data, error: apiError } = await usersAuthVerifyOtpCreate({
-                body: { pre_auth_token: preAuthToken, otp },
-            });
+        return usersAuthVerifyOtpCreate({ body: { pre_auth_token: preAuthToken, otp } })
+            .then(({ data, error: apiError }) => {
+                if (apiError || !data) {
+                    setError("Неверный или просроченный код");
+                    return false;
+                }
 
-            if (apiError || !data) {
-                setError("Неверный или просроченный код");
+                const tokens = data as VerifyOtpResponse;
+
+                return fetch("/api/auth/session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ access: tokens.access, refresh: tokens.refresh }),
+                }).then((res) => res.ok);
+            })
+            .catch(() => {
+                setError("Ошибка соединения. Попробуйте позже.");
                 return false;
-            }
-
-            const tokens = data as VerifyOtpResponse;
-
-            const res = await fetch("/api/auth/session", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ access: tokens.access, refresh: tokens.refresh }),
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
-
-            return res.ok;
-        } catch {
-            setError("Ошибка соединения. Попробуйте позже.");
-            return false;
-        } finally {
-            setIsLoading(false);
-        }
     };
 
     return { verifyOtp, isLoading, error };

@@ -1,5 +1,9 @@
-import { Avatar, Badge, Card, Container, Divider, Group, Stack, Text, Title } from "@mantine/core";
+"use client";
+
+import { useState } from "react";
+import { Avatar, Badge, Button, Card, Container, Divider, Group, Stack, Text, Title } from "@mantine/core";
 import type { RoleEnum, UserProfile } from "@/client/types.gen";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ROLE_LABELS: Record<RoleEnum, string> = {
     doctor: "Врач",
@@ -12,6 +16,14 @@ interface ProfileInfoProps {
 }
 
 export function ProfileInfo({ profile }: ProfileInfoProps) {
+    const { logout } = useAuth();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    async function handleLogout() {
+        setIsLoggingOut(true);
+        await logout();
+    }
+
     const initials = [profile.first_name[0], profile.last_name[0]]
         .filter(Boolean)
         .join("")
@@ -57,6 +69,18 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                         <Text size="sm">{dateJoined}</Text>
                     </Group>
                 </Stack>
+
+                <Divider mt="md" mb="md" />
+
+                <Button
+                    variant="subtle"
+                    color="red"
+                    fullWidth
+                    loading={isLoggingOut}
+                    onClick={handleLogout}
+                >
+                    Выйти
+                </Button>
             </Card>
         </Container>
     );
