@@ -11,6 +11,15 @@ import type {
     UsersAuthTokenRefreshCreateResponses,
     UsersAuthVerifyOtpCreateData,
     UsersAuthVerifyOtpCreateResponses,
+    UsersEmailChangeCreateData,
+    UsersEmailChangeCreateErrors,
+    UsersEmailChangeCreateResponses,
+    UsersEmailChangeVerifyCreateData,
+    UsersEmailChangeVerifyCreateErrors,
+    UsersEmailChangeVerifyCreateResponses,
+    UsersPartialUpdateData,
+    UsersPartialUpdateErrors,
+    UsersPartialUpdateResponses,
     UsersRetrieveData,
     UsersRetrieveErrors,
     UsersRetrieveResponses,
@@ -37,7 +46,7 @@ export type Options<
 /**
  * Профиль пользователя
  *
- * Возвращает профиль пользователя; доступен только владельцу аккаунта.
+ * Возвращает или обновляет профиль пользователя; доступен только владельцу аккаунта.
  */
 export const usersRetrieve = <ThrowOnError extends boolean = false>(
     options: Options<UsersRetrieveData, ThrowOnError>
@@ -47,6 +56,66 @@ export const usersRetrieve = <ThrowOnError extends boolean = false>(
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/users/{user_id}/",
         ...options,
+    });
+
+/**
+ * Обновление имени и фамилии
+ *
+ * Возвращает или обновляет профиль пользователя; доступен только владельцу аккаунта.
+ */
+export const usersPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<UsersPartialUpdateResponses, UsersPartialUpdateErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/{user_id}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Запрос смены email
+ *
+ * Проверяет новый email на уникальность и отправляет OTP для подтверждения.
+ */
+export const usersEmailChangeCreate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersEmailChangeCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<UsersEmailChangeCreateResponses, UsersEmailChangeCreateErrors, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/{user_id}/email-change/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Подтверждение смены email
+ *
+ * Проверяет OTP и применяет новый email к аккаунту пользователя.
+ */
+export const usersEmailChangeVerifyCreate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersEmailChangeVerifyCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        UsersEmailChangeVerifyCreateResponses,
+        UsersEmailChangeVerifyCreateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/{user_id}/email-change/verify/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
     });
 
 /**

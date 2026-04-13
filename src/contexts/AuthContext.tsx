@@ -11,7 +11,7 @@ export interface SessionUser {
 interface AuthContextValue {
     user: SessionUser | null;
     isLoading: boolean;
-    logout: () => Promise<void>;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
