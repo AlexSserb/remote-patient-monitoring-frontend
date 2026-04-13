@@ -33,6 +33,13 @@ export type Logout = {
 };
 
 /**
+ * Сериализатор подтверждения смены пароля: проверяет OTP и устанавливает новый пароль.
+ */
+export type PasswordResetVerify = {
+    otp: string;
+};
+
+/**
  * Сериализатор обновления имени и фамилии пользователя.
  */
 export type PatchedUpdateProfile = {
@@ -98,6 +105,14 @@ export type VerifyOtp = {
 export type LoginWritable = {
     email: string;
     password: string;
+};
+
+/**
+ * Сериализатор подтверждения смены пароля: проверяет OTP и устанавливает новый пароль.
+ */
+export type PasswordResetVerifyWritable = {
+    otp: string;
+    new_password: string;
 };
 
 /**
@@ -218,6 +233,58 @@ export type UsersEmailChangeVerifyCreateResponses = {
 
 export type UsersEmailChangeVerifyCreateResponse =
     UsersEmailChangeVerifyCreateResponses[keyof UsersEmailChangeVerifyCreateResponses];
+
+export type UsersPasswordResetCreateData = {
+    body?: never;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/password-reset/";
+};
+
+export type UsersPasswordResetCreateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type UsersPasswordResetCreateResponses = {
+    /**
+     * OTP отправлен на email пользователя
+     */
+    204: void;
+};
+
+export type UsersPasswordResetCreateResponse =
+    UsersPasswordResetCreateResponses[keyof UsersPasswordResetCreateResponses];
+
+export type UsersPasswordResetVerifyCreateData = {
+    body: PasswordResetVerifyWritable;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/password-reset/verify/";
+};
+
+export type UsersPasswordResetVerifyCreateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type UsersPasswordResetVerifyCreateResponses = {
+    /**
+     * Пароль успешно изменён
+     */
+    204: void;
+};
+
+export type UsersPasswordResetVerifyCreateResponse =
+    UsersPasswordResetVerifyCreateResponses[keyof UsersPasswordResetVerifyCreateResponses];
 
 export type UsersAuthLoginCreateData = {
     body: LoginWritable;

@@ -8,6 +8,7 @@ import type { RoleEnum, UserProfile } from "@/client/types.gen";
 import { useAuth } from "@/contexts/AuthContext";
 import { EditNameModal } from "./EditNameModal";
 import { EmailChangeModal } from "./EmailChangeModal";
+import { PasswordResetModal } from "./PasswordResetModal";
 
 const ROLE_LABELS: Record<RoleEnum, string> = {
     doctor: "Врач",
@@ -25,6 +26,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [editNameOpened, { open: openEditName, close: closeEditName }] = useDisclosure(false);
     const [emailChangeOpened, { open: openEmailChange, close: closeEmailChange }] = useDisclosure(false);
+    const [passwordResetOpened, { open: openPasswordReset, close: closePasswordReset }] = useDisclosure(false);
 
     function handleLogout() {
         setIsLoggingOut(true);
@@ -92,6 +94,9 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                         <Button variant="light" fullWidth onClick={openEmailChange}>
                             Изменить почту
                         </Button>
+                        <Button variant="light" fullWidth onClick={openPasswordReset}>
+                            Сменить пароль
+                        </Button>
                         <Button
                             variant="outline"
                             color="red"
@@ -118,6 +123,8 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                 onClose={closeEmailChange}
                 onSuccess={handleUpdateSuccess}
             />
+
+            <PasswordResetModal opened={passwordResetOpened} onClose={closePasswordReset} />
         </>
     );
 }

@@ -20,6 +20,12 @@ import type {
     UsersPartialUpdateData,
     UsersPartialUpdateErrors,
     UsersPartialUpdateResponses,
+    UsersPasswordResetCreateData,
+    UsersPasswordResetCreateErrors,
+    UsersPasswordResetCreateResponses,
+    UsersPasswordResetVerifyCreateData,
+    UsersPasswordResetVerifyCreateErrors,
+    UsersPasswordResetVerifyCreateResponses,
     UsersRetrieveData,
     UsersRetrieveErrors,
     UsersRetrieveResponses,
@@ -111,6 +117,42 @@ export const usersEmailChangeVerifyCreate = <ThrowOnError extends boolean = fals
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/users/{user_id}/email-change/verify/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Запрос смены пароля
+ *
+ * Генерирует OTP и отправляет его на текущий email пользователя.
+ */
+export const usersPasswordResetCreate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersPasswordResetCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<UsersPasswordResetCreateResponses, UsersPasswordResetCreateErrors, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/{user_id}/password-reset/",
+        ...options,
+    });
+
+/**
+ * Подтверждение смены пароля
+ *
+ * Проверяет OTP и устанавливает новый пароль пользователя.
+ */
+export const usersPasswordResetVerifyCreate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersPasswordResetVerifyCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        UsersPasswordResetVerifyCreateResponses,
+        UsersPasswordResetVerifyCreateErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/{user_id}/password-reset/verify/",
         ...options,
         headers: {
             "Content-Type": "application/json",
