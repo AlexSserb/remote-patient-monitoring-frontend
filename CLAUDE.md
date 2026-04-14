@@ -32,6 +32,7 @@ ESLint is configured with `eslint-config-next` core web vitals and TypeScript ru
 - **Component size:** max 600 lines per file. Split into subcomponents when approaching the limit.
 - **Formatting:** all files must be formatted with Prettier before committing.
 - **API client:** generated client, request functions, and type schemas live in `src/client/`.
+- **Promise style:** use `.then()`, `.catch()`, `.finally()` for all API calls. Never use `try/catch/finally` blocks around API calls.
 - **File structure per page:**
   - Page-local components → `src/app/<page>/components/`
   - Page-local hooks → `src/app/<page>/hooks/`

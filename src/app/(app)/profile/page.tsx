@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { decodeJwtPayload, isTokenExpired } from "@/lib/jwt";
-import type { UserProfile } from "@/client/types.gen";
+import { usersRetrieve } from "@/client/sdk.gen";
 import { ProfileInfo } from "./components/ProfileInfo";
 
 export const metadata: Metadata = {
@@ -24,14 +24,12 @@ export default async function ProfilePage() {
         redirect("/login");
     }
 
-    const response = await fetch(`http://127.0.0.1:8000/api/users/${userId}/`, {
+    const { data: profile, error } = await usersRetrieve({
+        path: { user_id: userId },
         headers: { Authorization: `Bearer ${accessToken}` },
-        cache: "no-store",
     });
 
-    if (!response.ok) redirect("/login");
-
-    const profile: UserProfile = await response.json();
+    if (error || !profile) redirect("/login");
 
     return <ProfileInfo profile={profile} />;
 }

@@ -5,6 +5,20 @@ export type ClientOptions = {
 };
 
 /**
+ * Сериализатор запроса на смену email: проверяет уникальность и отправляет OTP на новый адрес.
+ */
+export type EmailChangeRequest = {
+    new_email: string;
+};
+
+/**
+ * Сериализатор подтверждения смены email: проверяет OTP и применяет новый адрес.
+ */
+export type EmailChangeVerify = {
+    otp: string;
+};
+
+/**
  * Сериализатор первого шага: проверяет пароль, отправляет OTP, возвращает pre_auth_token.
  */
 export type Login = {
@@ -16,6 +30,27 @@ export type Login = {
  */
 export type Logout = {
     refresh: string;
+};
+
+/**
+ * Сериализатор подтверждения смены пароля: проверяет OTP и устанавливает новый пароль.
+ */
+export type PasswordResetVerify = {
+    otp: string;
+};
+
+/**
+ * Сериализатор обновления имени и фамилии пользователя.
+ */
+export type PatchedUpdateProfile = {
+    /**
+     * Имя
+     */
+    first_name?: string;
+    /**
+     * Фамилия
+     */
+    last_name?: string;
 };
 
 /**
@@ -73,6 +108,14 @@ export type LoginWritable = {
 };
 
 /**
+ * Сериализатор подтверждения смены пароля: проверяет OTP и устанавливает новый пароль.
+ */
+export type PasswordResetVerifyWritable = {
+    otp: string;
+    new_password: string;
+};
+
+/**
  * Сериализатор профиля пользователя для отображения публичных данных.
  */
 export type UserProfileWritable = {
@@ -116,6 +159,132 @@ export type UsersRetrieveResponses = {
 };
 
 export type UsersRetrieveResponse = UsersRetrieveResponses[keyof UsersRetrieveResponses];
+
+export type UsersPartialUpdateData = {
+    body?: PatchedUpdateProfile;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/";
+};
+
+export type UsersPartialUpdateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+    /**
+     * Пользователь не найден
+     */
+    404: unknown;
+};
+
+export type UsersPartialUpdateResponses = {
+    200: UserProfile;
+};
+
+export type UsersPartialUpdateResponse = UsersPartialUpdateResponses[keyof UsersPartialUpdateResponses];
+
+export type UsersEmailChangeCreateData = {
+    body: EmailChangeRequest;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/email-change/";
+};
+
+export type UsersEmailChangeCreateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type UsersEmailChangeCreateResponses = {
+    /**
+     * OTP отправлен на новый email
+     */
+    204: void;
+};
+
+export type UsersEmailChangeCreateResponse = UsersEmailChangeCreateResponses[keyof UsersEmailChangeCreateResponses];
+
+export type UsersEmailChangeVerifyCreateData = {
+    body: EmailChangeVerify;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/email-change/verify/";
+};
+
+export type UsersEmailChangeVerifyCreateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type UsersEmailChangeVerifyCreateResponses = {
+    200: UserProfile;
+};
+
+export type UsersEmailChangeVerifyCreateResponse =
+    UsersEmailChangeVerifyCreateResponses[keyof UsersEmailChangeVerifyCreateResponses];
+
+export type UsersPasswordResetCreateData = {
+    body?: never;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/password-reset/";
+};
+
+export type UsersPasswordResetCreateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type UsersPasswordResetCreateResponses = {
+    /**
+     * OTP отправлен на email пользователя
+     */
+    204: void;
+};
+
+export type UsersPasswordResetCreateResponse =
+    UsersPasswordResetCreateResponses[keyof UsersPasswordResetCreateResponses];
+
+export type UsersPasswordResetVerifyCreateData = {
+    body: PasswordResetVerifyWritable;
+    path: {
+        user_id: number;
+    };
+    query?: never;
+    url: "/api/users/{user_id}/password-reset/verify/";
+};
+
+export type UsersPasswordResetVerifyCreateErrors = {
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type UsersPasswordResetVerifyCreateResponses = {
+    /**
+     * Пароль успешно изменён
+     */
+    204: void;
+};
+
+export type UsersPasswordResetVerifyCreateResponse =
+    UsersPasswordResetVerifyCreateResponses[keyof UsersPasswordResetVerifyCreateResponses];
 
 export type UsersAuthLoginCreateData = {
     body: LoginWritable;
