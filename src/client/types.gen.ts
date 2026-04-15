@@ -54,6 +54,32 @@ export type PatchedUpdateProfile = {
 };
 
 /**
+ * Сериализатор элемента списка пациентов: основные поля и количество опекунов.
+ */
+export type PatientListItem = {
+    readonly id: number;
+    email: string;
+    /**
+     * Имя
+     */
+    first_name: string;
+    /**
+     * Фамилия
+     */
+    last_name: string;
+    /**
+     * Дата регистрации
+     */
+    readonly date_joined: string;
+    caregiver_count: number;
+};
+
+export type PatientListResponse = {
+    count: number;
+    results: Array<PatientListItem>;
+};
+
+/**
  * * `doctor` - Доктор
  * * `patient` - Пациент
  * * `caregiver` - Опекун
@@ -113,6 +139,27 @@ export type LoginWritable = {
 export type PasswordResetVerifyWritable = {
     otp: string;
     new_password: string;
+};
+
+/**
+ * Сериализатор элемента списка пациентов: основные поля и количество опекунов.
+ */
+export type PatientListItemWritable = {
+    email: string;
+    /**
+     * Имя
+     */
+    first_name: string;
+    /**
+     * Фамилия
+     */
+    last_name: string;
+    caregiver_count: number;
+};
+
+export type PatientListResponseWritable = {
+    count: number;
+    results: Array<PatientListItemWritable>;
 };
 
 /**
@@ -343,3 +390,44 @@ export type UsersAuthVerifyOtpCreateResponses = {
      */
     200: unknown;
 };
+
+export type UsersPatientsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Только прикреплённые к текущему доктору пациенты. Для опекунов игнорируется.
+         */
+        attached?: boolean;
+        /**
+         * Фильтр по наличию опекуна: all — все, yes — есть опекун, no — нет опекуна.
+         */
+        has_caregiver?: "all" | "no" | "yes";
+        /**
+         * Номер страницы (начиная с 1).
+         */
+        page?: number;
+        /**
+         * Количество записей на странице.
+         */
+        page_size?: number;
+        /**
+         * Поиск по имени или фамилии пациента (регистронезависимый).
+         */
+        search?: string;
+    };
+    url: "/api/users/patients/";
+};
+
+export type UsersPatientsListErrors = {
+    /**
+     * Доступ запрещён — только для докторов и опекунов
+     */
+    403: unknown;
+};
+
+export type UsersPatientsListResponses = {
+    200: PatientListResponse;
+};
+
+export type UsersPatientsListResponse = UsersPatientsListResponses[keyof UsersPatientsListResponses];

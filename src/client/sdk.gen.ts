@@ -26,6 +26,9 @@ import type {
     UsersPasswordResetVerifyCreateData,
     UsersPasswordResetVerifyCreateErrors,
     UsersPasswordResetVerifyCreateResponses,
+    UsersPatientsListData,
+    UsersPatientsListErrors,
+    UsersPatientsListResponses,
     UsersRetrieveData,
     UsersRetrieveErrors,
     UsersRetrieveResponses,
@@ -230,4 +233,19 @@ export const usersAuthVerifyOtpCreate = <ThrowOnError extends boolean = false>(
             "Content-Type": "application/json",
             ...options.headers,
         },
+    });
+
+/**
+ * Список пациентов
+ *
+ * Возвращает постраничный список пациентов с количеством опекунов для доктора или опекуна.
+ */
+export const usersPatientsList = <ThrowOnError extends boolean = false>(
+    options?: Options<UsersPatientsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<UsersPatientsListResponses, UsersPatientsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/patients/",
+        ...options,
     });
