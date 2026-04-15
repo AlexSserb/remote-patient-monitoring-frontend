@@ -19,8 +19,8 @@ export function EditNameModal({ opened, firstName, lastName, onClose, onSuccess 
     const form = useForm({
         initialValues: { first_name: firstName, last_name: lastName },
         validate: {
-            first_name: (v) => (v.trim().length === 0 ? "Введите имя" : null),
-            last_name: (v) => (v.trim().length === 0 ? "Введите фамилию" : null),
+            first_name: v => (v.trim().length === 0 ? "Введите имя" : null),
+            last_name: v => (v.trim().length === 0 ? "Введите фамилию" : null),
         },
     });
 
@@ -33,7 +33,7 @@ export function EditNameModal({ opened, firstName, lastName, onClose, onSuccess 
     }, [opened, firstName, lastName]);
 
     function handleSubmit(values: typeof form.values) {
-        updateProfile(values).then((ok) => {
+        updateProfile(values).then(ok => {
             if (ok) {
                 onSuccess();
                 onClose();
@@ -42,21 +42,40 @@ export function EditNameModal({ opened, firstName, lastName, onClose, onSuccess 
     }
 
     return (
-        <Modal opened={opened} onClose={onClose} title="Редактировать профиль" centered>
+        <Modal
+            opened={opened}
+            onClose={onClose}
+            title="Редактировать профиль"
+            centered>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="sm">
-                    <TextInput label="Имя" {...form.getInputProps("first_name")} />
-                    <TextInput label="Фамилия" {...form.getInputProps("last_name")} />
+                    <TextInput
+                        label="Имя"
+                        {...form.getInputProps("first_name")}
+                    />
+                    <TextInput
+                        label="Фамилия"
+                        {...form.getInputProps("last_name")}
+                    />
                     {error && (
-                        <Text size="sm" c="red">
+                        <Text
+                            size="sm"
+                            c="red">
                             {error}
                         </Text>
                     )}
-                    <Group justify="flex-end" mt="xs">
-                        <Button variant="default" onClick={onClose} disabled={isLoading}>
+                    <Group
+                        justify="flex-end"
+                        mt="xs">
+                        <Button
+                            variant="default"
+                            onClick={onClose}
+                            disabled={isLoading}>
                             Отмена
                         </Button>
-                        <Button type="submit" loading={isLoading}>
+                        <Button
+                            type="submit"
+                            loading={isLoading}>
                             Сохранить
                         </Button>
                     </Group>

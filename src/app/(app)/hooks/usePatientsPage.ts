@@ -45,7 +45,7 @@ export function usePatientsPage({
         if (search) params.set("search", search);
 
         fetch(`/api/patients?${params.toString()}`)
-            .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+            .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
             .then((data: { count: number; results: PatientListItem[] }) => {
                 setPatients(data.results);
                 setTotal(data.count);

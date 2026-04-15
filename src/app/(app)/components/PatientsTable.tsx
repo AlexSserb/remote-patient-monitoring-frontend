@@ -105,7 +105,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
         setPage(1);
     }
 
-    const rows = patients.map((patient) => {
+    const rows = patients.map(patient => {
         const dateJoined = new Intl.DateTimeFormat("ru-RU", {
             day: "numeric",
             month: "long",
@@ -126,17 +126,21 @@ export function PatientsTable({ role }: PatientsTableProps) {
     return (
         <>
             {/* Модалка фильтров */}
-            <Modal opened={filtersOpened} onClose={closeFilters} title="Фильтры" size="sm">
+            <Modal
+                opened={filtersOpened}
+                onClose={closeFilters}
+                title="Фильтры"
+                size="sm">
                 <Stack gap="md">
                     {role === "doctor" && (
                         <Switch
                             label="Только мои пациенты"
                             checked={draft.attached}
-                            onChange={(e) => {
+                            onChange={e => {
                                 // Значение нужно извлечь до передачи в функциональное обновление,
                                 // так как после завершения обработчика currentTarget становится null
                                 const checked = e.currentTarget.checked;
-                                setDraft((d) => ({ ...d, attached: checked }));
+                                setDraft(d => ({ ...d, attached: checked }));
                             }}
                         />
                     )}
@@ -144,13 +148,16 @@ export function PatientsTable({ role }: PatientsTableProps) {
                         label="Опекун/родственник"
                         data={HAS_CAREGIVER_OPTIONS}
                         value={draft.hasCaregiver}
-                        onChange={(v) =>
-                            setDraft((d) => ({ ...d, hasCaregiver: (v as HasCaregiverFilter) ?? "all" }))
-                        }
+                        onChange={v => setDraft(d => ({ ...d, hasCaregiver: (v as HasCaregiverFilter) ?? "all" }))}
                         allowDeselect={false}
                     />
-                    <Group justify="space-between" mt="xs">
-                        <Button variant="subtle" color="gray" onClick={handleResetFilters}>
+                    <Group
+                        justify="space-between"
+                        mt="xs">
+                        <Button
+                            variant="subtle"
+                            color="gray"
+                            onClick={handleResetFilters}>
                             Сбросить
                         </Button>
                         <Button onClick={handleApplyFilters}>Применить</Button>
@@ -168,12 +175,15 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 }}
                 px="xl"
                 pt="sm"
-                pb="xs"
-            >
+                pb="xs">
                 {/* Заголовок + кнопка фильтров */}
-                <Group justify="space-between" mb="xs">
+                <Group
+                    justify="space-between"
+                    mb="xs">
                     <Title order={2}>Пациенты</Title>
-                    <Button variant="light" onClick={handleOpenFilters}>
+                    <Button
+                        variant="light"
+                        onClick={handleOpenFilters}>
                         Фильтры
                     </Button>
                 </Group>
@@ -182,12 +192,14 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 <TextInput
                     placeholder="Поиск по имени, фамилии или email…"
                     value={searchInput}
-                    onChange={(e) => handleSearchChange(e.currentTarget.value)}
+                    onChange={e => handleSearchChange(e.currentTarget.value)}
                     mb="sm"
                 />
 
                 {error && (
-                    <Alert color="red" mb="sm">
+                    <Alert
+                        color="red"
+                        mb="sm">
                         {error}
                     </Alert>
                 )}
@@ -203,7 +215,11 @@ export function PatientsTable({ role }: PatientsTableProps) {
                             <Text c="dimmed">Пациенты не найдены</Text>
                         </Center>
                     ) : (
-                        <Table striped highlightOnHover withTableBorder stickyHeader>
+                        <Table
+                            striped
+                            highlightOnHover
+                            withTableBorder
+                            stickyHeader>
                             <Table.Thead>
                                 <Table.Tr>
                                     <Table.Th>Фамилия</Table.Th>
@@ -219,11 +235,21 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 </div>
 
                 {/* Нижняя строка: счётчик и пагинация */}
-                <Group justify="space-between" align="center" pt="xs">
-                    <Text size="sm" c="dimmed">
+                <Group
+                    justify="space-between"
+                    align="center"
+                    pt="xs">
+                    <Text
+                        size="sm"
+                        c="dimmed">
                         Всего: {total}
                     </Text>
-                    <Pagination total={totalPages} value={page} onChange={setPage} size="sm" />
+                    <Pagination
+                        total={totalPages}
+                        value={page}
+                        onChange={setPage}
+                        size="sm"
+                    />
                 </Group>
             </Stack>
         </>

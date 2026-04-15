@@ -17,8 +17,11 @@ export function MobileNavbar({ role, onClose }: MobileNavbarProps) {
 
     return (
         <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-            <Stack gap={0} pt="sm" style={{ flex: 1 }}>
-                {navItems.map((item) => (
+            <Stack
+                gap={0}
+                pt="sm"
+                style={{ flex: 1 }}>
+                {navItems.map(item => (
                     <NavLink
                         key={item.href}
                         component={Link}

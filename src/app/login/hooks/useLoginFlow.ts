@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import { useState } from "react";
 
 type Step = "credentials" | "otp";
 
@@ -19,5 +19,5 @@ export function useLoginFlow(): UseLoginFlowReturn {
         setStep("otp");
     };
 
-    return {step, preAuthToken, onCredentialsSuccess};
+    return { step, preAuthToken, onCredentialsSuccess };
 }
