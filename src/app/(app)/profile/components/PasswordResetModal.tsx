@@ -18,7 +18,7 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
     const passwordForm = useForm({
         initialValues: { new_password: "", confirm_password: "" },
         validate: {
-            new_password: (v) => (v.length >= 8 ? null : "Пароль должен содержать не менее 8 символов"),
+            new_password: v => (v.length >= 8 ? null : "Пароль должен содержать не менее 8 символов"),
             confirm_password: (v, values) => (v === values.new_password ? null : "Пароли не совпадают"),
         },
     });
@@ -32,7 +32,7 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
     }
 
     function handleSend() {
-        sendOtp().then((ok) => {
+        sendOtp().then(ok => {
             if (ok) setStep("otp");
         });
     }
@@ -43,28 +43,45 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
     }
 
     function handlePasswordSubmit(values: typeof passwordForm.values) {
-        resetPassword(confirmedOtp, values.new_password).then((ok) => {
+        resetPassword(confirmedOtp, values.new_password).then(ok => {
             if (ok) handleClose();
         });
     }
 
     return (
-        <Modal opened={opened} onClose={handleClose} title="Сменить пароль" centered>
+        <Modal
+            opened={opened}
+            onClose={handleClose}
+            title="Сменить пароль"
+            centered>
             {step === "send" && (
                 <Stack gap="sm">
-                    <Text size="sm" c="dimmed" ta="center">
+                    <Text
+                        size="sm"
+                        c="dimmed"
+                        ta="center">
                         Код подтверждения будет отправлен на вашу почту
                     </Text>
                     {error && (
-                        <Text size="sm" c="red" ta="center">
+                        <Text
+                            size="sm"
+                            c="red"
+                            ta="center">
                             {error}
                         </Text>
                     )}
-                    <Group justify="flex-end" mt="xs">
-                        <Button variant="default" onClick={handleClose} disabled={isLoading}>
+                    <Group
+                        justify="flex-end"
+                        mt="xs">
+                        <Button
+                            variant="default"
+                            onClick={handleClose}
+                            disabled={isLoading}>
                             Отмена
                         </Button>
-                        <Button loading={isLoading} onClick={handleSend}>
+                        <Button
+                            loading={isLoading}
+                            onClick={handleSend}>
                             Отправить код
                         </Button>
                     </Group>
@@ -72,8 +89,13 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
             )}
 
             {step === "otp" && (
-                <Stack gap="sm" align="center">
-                    <Text size="sm" c="dimmed" ta="center">
+                <Stack
+                    gap="sm"
+                    align="center">
+                    <Text
+                        size="sm"
+                        c="dimmed"
+                        ta="center">
                         Введите код из письма
                     </Text>
                     <PinInput
@@ -84,7 +106,10 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
                         aria-label="Код подтверждения"
                     />
                     {error && (
-                        <Text size="sm" c="red" ta="center">
+                        <Text
+                            size="sm"
+                            c="red"
+                            ta="center">
                             {error}
                         </Text>
                     )}
@@ -95,8 +120,7 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
                         onClick={() => {
                             setStep("send");
                             resetError();
-                        }}
-                    >
+                        }}>
                         Отправить код повторно
                     </Button>
                 </Stack>
@@ -114,15 +138,24 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
                             {...passwordForm.getInputProps("confirm_password")}
                         />
                         {error && (
-                            <Text size="sm" c="red">
+                            <Text
+                                size="sm"
+                                c="red">
                                 {error}
                             </Text>
                         )}
-                        <Group justify="flex-end" mt="xs">
-                            <Button variant="default" onClick={handleClose} disabled={isLoading}>
+                        <Group
+                            justify="flex-end"
+                            mt="xs">
+                            <Button
+                                variant="default"
+                                onClick={handleClose}
+                                disabled={isLoading}>
                                 Отмена
                             </Button>
-                            <Button type="submit" loading={isLoading}>
+                            <Button
+                                type="submit"
+                                loading={isLoading}>
                                 Сохранить
                             </Button>
                         </Group>

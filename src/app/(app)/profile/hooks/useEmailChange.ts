@@ -23,9 +23,9 @@ export function useEmailChange(): UseEmailChangeReturn {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ new_email: newEmail }),
         })
-            .then((res) => {
+            .then(res => {
                 if (!res.ok) {
-                    return res.json().then((data) => {
+                    return res.json().then(data => {
                         setError(data?.new_email?.[0] ?? "Не удалось отправить код. Попробуйте позже.");
                         return false;
                     });
@@ -50,7 +50,7 @@ export function useEmailChange(): UseEmailChangeReturn {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ otp }),
         })
-            .then((res) => {
+            .then(res => {
                 if (!res.ok) {
                     setError("Неверный или истёкший код подтверждения.");
                     return false;

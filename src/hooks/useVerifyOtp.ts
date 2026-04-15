@@ -35,7 +35,7 @@ export function useVerifyOtp(): UseVerifyOtpReturn {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ access: tokens.access, refresh: tokens.refresh }),
-                }).then((res) => res.ok);
+                }).then(res => res.ok);
             })
             .catch(() => {
                 setError("Ошибка соединения. Попробуйте позже.");

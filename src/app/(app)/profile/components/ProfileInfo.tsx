@@ -38,10 +38,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
         router.refresh();
     }
 
-    const initials = [profile.first_name[0], profile.last_name[0]]
-        .filter(Boolean)
-        .join("")
-        .toUpperCase();
+    const initials = [profile.first_name[0], profile.last_name[0]].filter(Boolean).join("").toUpperCase();
 
     const fullName = `${profile.first_name} ${profile.last_name}`.trim();
 
@@ -53,10 +50,22 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
 
     return (
         <>
-            <Container size="xs" py="xl">
-                <Card shadow="sm" padding="xl" radius="md" withBorder>
-                    <Stack align="center" gap="xs" mb="lg">
-                        <Avatar size="xl" radius="xl" color="blue">
+            <Container
+                size="xs"
+                py="xl">
+                <Card
+                    shadow="sm"
+                    padding="xl"
+                    radius="md"
+                    withBorder>
+                    <Stack
+                        align="center"
+                        gap="xs"
+                        mb="lg">
+                        <Avatar
+                            size="xl"
+                            radius="xl"
+                            color="blue">
                             {initials}
                         </Avatar>
                         <Title order={3}>{fullName}</Title>
@@ -66,35 +75,53 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
 
                     <Stack gap="sm">
                         <Group justify="space-between">
-                            <Text size="sm" c="dimmed">
+                            <Text
+                                size="sm"
+                                c="dimmed">
                                 Email
                             </Text>
                             <Text size="sm">{profile.email}</Text>
                         </Group>
                         <Group justify="space-between">
-                            <Text size="sm" c="dimmed">
+                            <Text
+                                size="sm"
+                                c="dimmed">
                                 Роль
                             </Text>
                             <Badge variant="light">{ROLE_LABELS[profile.role]}</Badge>
                         </Group>
                         <Group justify="space-between">
-                            <Text size="sm" c="dimmed">
+                            <Text
+                                size="sm"
+                                c="dimmed">
                                 Дата регистрации
                             </Text>
                             <Text size="sm">{dateJoined}</Text>
                         </Group>
                     </Stack>
 
-                    <Divider mt="md" mb="md" />
+                    <Divider
+                        mt="md"
+                        mb="md"
+                    />
 
                     <Stack gap="xs">
-                        <Button variant="light" fullWidth onClick={openEditName}>
+                        <Button
+                            variant="light"
+                            fullWidth
+                            onClick={openEditName}>
                             Редактировать
                         </Button>
-                        <Button variant="light" fullWidth onClick={openEmailChange}>
+                        <Button
+                            variant="light"
+                            fullWidth
+                            onClick={openEmailChange}>
                             Изменить почту
                         </Button>
-                        <Button variant="light" fullWidth onClick={openPasswordReset}>
+                        <Button
+                            variant="light"
+                            fullWidth
+                            onClick={openPasswordReset}>
                             Сменить пароль
                         </Button>
                         <Button
@@ -102,8 +129,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                             color="red"
                             fullWidth
                             loading={isLoggingOut}
-                            onClick={handleLogout}
-                        >
+                            onClick={handleLogout}>
                             Выйти
                         </Button>
                     </Stack>
@@ -124,7 +150,10 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                 onSuccess={handleUpdateSuccess}
             />
 
-            <PasswordResetModal opened={passwordResetOpened} onClose={closePasswordReset} />
+            <PasswordResetModal
+                opened={passwordResetOpened}
+                onClose={closePasswordReset}
+            />
         </>
     );
 }

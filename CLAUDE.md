@@ -4,6 +4,7 @@
 
 A remote monitoring system for patients with endocrine disorders.
 Roles in the system:
+
 - Doctor. They have assigned patients and caregivers.
 - Patient. They fill out a health log and receive notifications reminding them to update it. A single patient may have multiple doctors and caregivers.
 - Caregiver. They can be assigned to multiple patients and can enter data into their condition diaries. Caregivers also receive notifications that they need to fill out their patients’ diaries.
@@ -34,8 +35,8 @@ ESLint is configured with `eslint-config-next` core web vitals and TypeScript ru
 - **API client:** generated client, request functions, and type schemas live in `src/client/`.
 - **Promise style:** use `.then()`, `.catch()`, `.finally()` for all API calls. Never use `try/catch/finally` blocks around API calls.
 - **File structure per page:**
-  - Page-local components → `src/app/<page>/components/`
-  - Page-local hooks → `src/app/<page>/hooks/`
+    - Page-local components → `src/app/<page>/components/`
+    - Page-local hooks → `src/app/<page>/hooks/`
 - **Reusable components** (used by more than one page) → `src/components/`.
 
 ## Workflow
@@ -54,4 +55,5 @@ ESLint is configured with `eslint-config-next` core web vitals and TypeScript ru
 
 ### After coding
 
-1. **Confirm completion.** Which files were changed, what to check.
+1. Run `yarn prettier --write .`
+2. **Confirm completion.** Which files were changed, what to check.

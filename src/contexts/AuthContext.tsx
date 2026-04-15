@@ -23,18 +23,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         fetch("/api/auth/session")
-            .then((res) => (res.status === 401 ? fetch("/api/auth/session/refresh", { method: "POST" }) : res))
-            .then((res) => (res.ok ? res.json().then((data: SessionUser) => setUser(data)) : setUser(null)))
+            .then(res => (res.status === 401 ? fetch("/api/auth/session/refresh", { method: "POST" }) : res))
+            .then(res => (res.ok ? res.json().then((data: SessionUser) => setUser(data)) : setUser(null)))
             .catch(() => setUser(null))
             .finally(() => setIsLoading(false));
     }, []);
 
     const logout = useCallback(() => {
-        return fetch("/api/auth/session", { method: "DELETE" })
-            .finally(() => {
-                setUser(null);
-                router.push("/login");
-            });
+        return fetch("/api/auth/session", { method: "DELETE" }).finally(() => {
+            setUser(null);
+            router.push("/login");
+        });
     }, [router]);
 
     return <AuthContext.Provider value={{ user, isLoading, logout }}>{children}</AuthContext.Provider>;

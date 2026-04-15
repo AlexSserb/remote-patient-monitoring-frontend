@@ -19,7 +19,7 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
     const emailForm = useForm({
         initialValues: { new_email: "" },
         validate: {
-            new_email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
+            new_email: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
         },
     });
 
@@ -31,7 +31,7 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
     }
 
     function handleEmailSubmit(values: { new_email: string }) {
-        requestChange(values.new_email).then((ok) => {
+        requestChange(values.new_email).then(ok => {
             if (ok) {
                 setPendingEmail(values.new_email);
                 setStep("otp");
@@ -40,7 +40,7 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
     }
 
     function handleOtpComplete(otp: string) {
-        verifyChange(otp).then((ok) => {
+        verifyChange(otp).then(ok => {
             if (ok) {
                 onSuccess();
                 handleClose();
@@ -49,7 +49,11 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
     }
 
     return (
-        <Modal opened={opened} onClose={handleClose} title="Изменить почту" centered>
+        <Modal
+            opened={opened}
+            onClose={handleClose}
+            title="Изменить почту"
+            centered>
             {step === "email" ? (
                 <form onSubmit={emailForm.onSubmit(handleEmailSubmit)}>
                     <Stack gap="sm">
@@ -60,25 +64,42 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
                             {...emailForm.getInputProps("new_email")}
                         />
                         {error && (
-                            <Text size="sm" c="red">
+                            <Text
+                                size="sm"
+                                c="red">
                                 {error}
                             </Text>
                         )}
-                        <Group justify="flex-end" mt="xs">
-                            <Button variant="default" onClick={handleClose} disabled={isLoading}>
+                        <Group
+                            justify="flex-end"
+                            mt="xs">
+                            <Button
+                                variant="default"
+                                onClick={handleClose}
+                                disabled={isLoading}>
                                 Отмена
                             </Button>
-                            <Button type="submit" loading={isLoading}>
+                            <Button
+                                type="submit"
+                                loading={isLoading}>
                                 Отправить код
                             </Button>
                         </Group>
                     </Stack>
                 </form>
             ) : (
-                <Stack gap="sm" align="center">
-                    <Text size="sm" c="dimmed" ta="center">
+                <Stack
+                    gap="sm"
+                    align="center">
+                    <Text
+                        size="sm"
+                        c="dimmed"
+                        ta="center">
                         Код подтверждения отправлен на{" "}
-                        <Text component="span" fw={500} c="dark">
+                        <Text
+                            component="span"
+                            fw={500}
+                            c="dark">
                             {pendingEmail}
                         </Text>
                     </Text>
@@ -90,7 +111,10 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
                         aria-label="Код подтверждения"
                     />
                     {error && (
-                        <Text size="sm" c="red" ta="center">
+                        <Text
+                            size="sm"
+                            c="red"
+                            ta="center">
                             {error}
                         </Text>
                     )}
@@ -101,8 +125,7 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
                         onClick={() => {
                             setStep("email");
                             resetError();
-                        }}
-                    >
+                        }}>
                         Изменить email
                     </Button>
                 </Stack>

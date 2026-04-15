@@ -23,14 +23,19 @@ export function AppShellLayout({ children, role }: AppShellLayoutProps) {
                 breakpoint: "sm",
                 // Navbar is drawer-style on mobile only; always hidden on desktop
                 collapsed: { desktop: true, mobile: !opened },
-            }}
-        >
+            }}>
             <AppShell.Header>
-                <AppHeader opened={opened} onToggle={toggle} />
+                <AppHeader
+                    opened={opened}
+                    onToggle={toggle}
+                />
             </AppShell.Header>
 
             <AppShell.Navbar>
-                <MobileNavbar role={role} onClose={close} />
+                <MobileNavbar
+                    role={role}
+                    onClose={close}
+                />
             </AppShell.Navbar>
 
             <AppShell.Main>{children}</AppShell.Main>
