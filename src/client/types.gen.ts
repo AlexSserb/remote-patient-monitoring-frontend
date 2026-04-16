@@ -5,6 +5,46 @@ export type ClientOptions = {
 };
 
 /**
+ * Участник группы чатов с id чата и временем последнего сообщения.
+ */
+export type ChatGroupMember = {
+    id: number;
+    first_name: string;
+    last_name: string;
+    chat_id: number | null;
+    last_message_at: string | null;
+};
+
+/**
+ * Чат со сведениями о собеседнике — для плоского списка пациента.
+ */
+export type ChatItem = {
+    readonly id: number;
+    /**
+     * Возвращает данные собеседника (не текущего пользователя).
+     */
+    readonly interlocutor: {
+        [key: string]: unknown;
+    };
+    /**
+     * Дата последнего сообщения
+     */
+    last_message_at?: string | null;
+    /**
+     * Дата создания
+     */
+    readonly created_at: string;
+};
+
+/**
+ * Группа чатов доктора — один пациент и все его опекуны.
+ */
+export type DoctorChatGroup = {
+    patient: ChatGroupMember;
+    caregivers: Array<ChatGroupMember>;
+};
+
+/**
  * Сериализатор запроса на смену email: проверяет уникальность и отправляет OTP на новый адрес.
  */
 export type EmailChangeRequest = {
@@ -126,6 +166,16 @@ export type VerifyOtp = {
 };
 
 /**
+ * Чат со сведениями о собеседнике — для плоского списка пациента.
+ */
+export type ChatItemWritable = {
+    /**
+     * Дата последнего сообщения
+     */
+    last_message_at?: string | null;
+};
+
+/**
  * Сериализатор первого шага: проверяет пароль, отправляет OTP, возвращает pre_auth_token.
  */
 export type LoginWritable = {
@@ -180,6 +230,46 @@ export type UserProfileWritable = {
      */
     role: RoleEnum;
 };
+
+export type ChatsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/chats/";
+};
+
+export type ChatsListErrors = {
+    /**
+     * Доступ запрещён — только для пациентов
+     */
+    403: unknown;
+};
+
+export type ChatsListResponses = {
+    200: Array<ChatItem>;
+};
+
+export type ChatsListResponse = ChatsListResponses[keyof ChatsListResponses];
+
+export type ChatsGroupsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/chats/groups/";
+};
+
+export type ChatsGroupsListErrors = {
+    /**
+     * Доступ запрещён — только для докторов и опекунов
+     */
+    403: unknown;
+};
+
+export type ChatsGroupsListResponses = {
+    200: Array<DoctorChatGroup>;
+};
+
+export type ChatsGroupsListResponse = ChatsGroupsListResponses[keyof ChatsGroupsListResponses];
 
 export type UsersRetrieveData = {
     body?: never;
@@ -412,7 +502,7 @@ export type UsersPatientsListData = {
          */
         page_size?: number;
         /**
-         * Поиск по имени или фамилии пациента (регистронезависимый).
+         * Поиск по имени, фамилии или email пациента (регистронезависимый).
          */
         search?: string;
     };

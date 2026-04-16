@@ -3,6 +3,12 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
+    ChatsGroupsListData,
+    ChatsGroupsListErrors,
+    ChatsGroupsListResponses,
+    ChatsListData,
+    ChatsListErrors,
+    ChatsListResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -51,6 +57,34 @@ export type Options<
      */
     meta?: Record<string, unknown>;
 };
+
+/**
+ * Список чатов пациента
+ *
+ * Возвращает плоский список чатов — только для пациентов.
+ */
+export const chatsList = <ThrowOnError extends boolean = false>(options?: Options<ChatsListData, ThrowOnError>) =>
+    (options?.client ?? client).get<ChatsListResponses, ChatsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/",
+        ...options,
+    });
+
+/**
+ * Группы чатов доктора или опекуна
+ *
+ * Возвращает группы чатов по пациентам — только для докторов и опекунов.
+ */
+export const chatsGroupsList = <ThrowOnError extends boolean = false>(
+    options?: Options<ChatsGroupsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<ChatsGroupsListResponses, ChatsGroupsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/groups/",
+        ...options,
+    });
 
 /**
  * Профиль пользователя
