@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
     ActionIcon,
     Alert,
@@ -37,6 +37,38 @@ function formatTime(isoString: string): string {
         hour: "2-digit",
         minute: "2-digit",
     }).format(new Date(isoString));
+}
+
+function formatDateSeparator(isoString: string): string {
+    return new Intl.DateTimeFormat("ru-RU", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(new Date(isoString));
+}
+
+function isSameDay(a: string, b: string): boolean {
+    const da = new Date(a);
+    const db = new Date(b);
+    return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
+}
+
+function DateSeparator({ isoString }: { isoString: string }) {
+    return (
+        <Center my="xs">
+            <Text
+                size="xs"
+                c="dimmed"
+                px="sm"
+                py={2}
+                style={{
+                    background: "var(--mantine-color-gray-3)",
+                    borderRadius: "var(--mantine-radius-xl)",
+                }}>
+                {formatDateSeparator(isoString)}
+            </Text>
+        </Center>
+    );
 }
 
 interface MessageBubbleProps {
@@ -172,13 +204,18 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
                         <Text c="dimmed">Нет сообщений</Text>
                     </Center>
                 )}
-                {messages.map(msg => (
-                    <MessageBubble
-                        key={msg.id}
-                        message={msg}
-                        currentUserId={currentUserId}
-                    />
-                ))}
+                {messages.map((msg, i) => {
+                    const showDate = i === 0 || !isSameDay(messages[i - 1].created_at, msg.created_at);
+                    return (
+                        <Fragment key={msg.id}>
+                            {showDate && <DateSeparator isoString={msg.created_at} />}
+                            <MessageBubble
+                                message={msg}
+                                currentUserId={currentUserId}
+                            />
+                        </Fragment>
+                    );
+                })}
             </ScrollArea>
 
             <Divider />
