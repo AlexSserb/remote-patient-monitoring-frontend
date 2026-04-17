@@ -12,6 +12,9 @@ import type {
     ChatsListData,
     ChatsListErrors,
     ChatsListResponses,
+    ChatsMessagesDestroyData,
+    ChatsMessagesDestroyErrors,
+    ChatsMessagesDestroyResponses,
     ChatsMessagesRetrieveData,
     ChatsMessagesRetrieveErrors,
     ChatsMessagesRetrieveResponses,
@@ -89,6 +92,20 @@ export const chatsMessagesRetrieve = <ThrowOnError extends boolean = false>(
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/chats/{chat_id}/messages/",
+        ...options,
+    });
+
+/**
+ * Удаление сообщения
+ *
+ * Помечает сообщение удалённым — только отправитель может удалить своё сообщение.
+ */
+export const chatsMessagesDestroy = <ThrowOnError extends boolean = false>(
+    options: Options<ChatsMessagesDestroyData, ThrowOnError>
+) =>
+    (options.client ?? client).delete<ChatsMessagesDestroyResponses, ChatsMessagesDestroyErrors, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/{chat_id}/messages/{message_id}/",
         ...options,
     });
 

@@ -11,9 +11,11 @@ import {
     Group,
     Loader,
     Paper,
+    Portal,
     ScrollArea,
     Text,
     Textarea,
+    UnstyledButton,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import type { Message } from "@/client/types.gen";
@@ -74,10 +76,37 @@ function DateSeparator({ isoString }: { isoString: string }) {
 interface MessageBubbleProps {
     message: Message;
     currentUserId: number | null;
+    onShowMenu: (messageId: number, x: number, y: number) => void;
 }
 
-function MessageBubble({ message, currentUserId }: MessageBubbleProps) {
+function MessageBubble({ message, currentUserId, onShowMenu }: MessageBubbleProps) {
     const isOwn = message.sender.id === currentUserId;
+    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    function handleContextMenu(e: React.MouseEvent) {
+        if (!isOwn || message.is_deleted) return;
+        e.preventDefault();
+        onShowMenu(message.id, e.clientX, e.clientY);
+    }
+
+    function handleTouchStart(e: React.TouchEvent) {
+        if (!isOwn || message.is_deleted) return;
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            onShowMenu(message.id, e.touches[0].clientX, e.touches[0].clientY);
+            return;
+        }
+        const { clientX, clientY } = e.touches[0];
+        longPressTimer.current = setTimeout(() => onShowMenu(message.id, clientX, clientY), 500);
+    }
+
+    function cancelLongPress() {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    }
+
     return (
         <Box
             style={{
@@ -98,12 +127,26 @@ function MessageBubble({ message, currentUserId }: MessageBubbleProps) {
                     px="sm"
                     py={6}
                     radius="md"
-                    bg={isOwn ? "blue.6" : "gray.1"}>
-                    <Text
-                        size="sm"
-                        c={isOwn ? "white" : "dark"}>
-                        {message.content}
-                    </Text>
+                    bg={isOwn ? "blue.6" : "gray.1"}
+                    onContextMenu={handleContextMenu}
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={cancelLongPress}
+                    onTouchMove={cancelLongPress}
+                    style={{ userSelect: "none" }}>
+                    {message.is_deleted ? (
+                        <Text
+                            size="sm"
+                            c={isOwn ? "blue.2" : "dimmed"}
+                            fs="italic">
+                            Сообщение удалено
+                        </Text>
+                    ) : (
+                        <Text
+                            size="sm"
+                            c={isOwn ? "white" : "dark"}>
+                            {message.content}
+                        </Text>
+                    )}
                     <Text
                         size="xs"
                         c={isOwn ? "blue.1" : "dimmed"}
@@ -117,16 +160,32 @@ function MessageBubble({ message, currentUserId }: MessageBubbleProps) {
     );
 }
 
+interface ContextMenuState {
+    messageId: number;
+    x: number;
+    y: number;
+}
+
 interface MessageListProps {
     chatId: number;
     currentUserId: number | null;
 }
 
 function MessageList({ chatId, currentUserId }: MessageListProps) {
-    const { messages, isLoading, isLoadingMore, hasMore, error, sendError, loadMore, sendMessage } =
+    const { messages, isLoading, isLoadingMore, hasMore, error, sendError, loadMore, sendMessage, deleteMessage } =
         useChatMessages(chatId);
 
     const [inputValue, setInputValue] = useState("");
+    const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+
+    function handleShowMenu(messageId: number, x: number, y: number) {
+        setContextMenu({ messageId, x, y });
+    }
+
+    function handleDeleteFromMenu() {
+        if (contextMenu) deleteMessage(contextMenu.messageId);
+        setContextMenu(null);
+    }
     const viewportRef = useRef<HTMLDivElement>(null);
     const prevMessageCountRef = useRef(0);
 
@@ -212,6 +271,7 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
                             <MessageBubble
                                 message={msg}
                                 currentUserId={currentUserId}
+                                onShowMenu={handleShowMenu}
                             />
                         </Fragment>
                     );
@@ -253,6 +313,38 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
                     ➤
                 </ActionIcon>
             </Group>
+            {contextMenu && (
+                <Portal>
+                    <div
+                        style={{ position: "fixed", inset: 0, zIndex: 999 }}
+                        onClick={() => setContextMenu(null)}
+                    />
+                    <Paper
+                        shadow="md"
+                        withBorder
+                        style={{
+                            position: "fixed",
+                            top: contextMenu.y,
+                            left: contextMenu.x,
+                            transform: "translateX(-100%)",
+                            zIndex: 1000,
+                            minWidth: 150,
+                            overflow: "hidden",
+                        }}>
+                        <UnstyledButton
+                            w="100%"
+                            px="md"
+                            py="xs"
+                            onClick={handleDeleteFromMenu}>
+                            <Text
+                                size="sm"
+                                c="red">
+                                Удалить
+                            </Text>
+                        </UnstyledButton>
+                    </Paper>
+                </Portal>
+            )}
         </>
     );
 }

@@ -103,9 +103,13 @@ export type Message = {
     readonly id: number;
     sender: MessageSender;
     /**
-     * Текст сообщения
+     * Скрывает текст удалённого сообщения.
      */
-    content: string;
+    readonly content: string | null;
+    /**
+     * Удалено
+     */
+    is_deleted?: boolean;
     /**
      * Дата отправки
      */
@@ -245,9 +249,9 @@ export type LoginWritable = {
  */
 export type MessageWritable = {
     /**
-     * Текст сообщения
+     * Удалено
      */
-    content: string;
+    is_deleted?: boolean;
 };
 
 /**
@@ -356,6 +360,36 @@ export type ChatsMessagesRetrieveResponses = {
 };
 
 export type ChatsMessagesRetrieveResponse = ChatsMessagesRetrieveResponses[keyof ChatsMessagesRetrieveResponses];
+
+export type ChatsMessagesDestroyData = {
+    body?: never;
+    path: {
+        chat_id: number;
+        message_id: number;
+    };
+    query?: never;
+    url: "/api/chats/{chat_id}/messages/{message_id}/";
+};
+
+export type ChatsMessagesDestroyErrors = {
+    /**
+     * Нельзя удалить чужое сообщение или нет доступа к чату
+     */
+    403: unknown;
+    /**
+     * Сообщение не найдено
+     */
+    404: unknown;
+};
+
+export type ChatsMessagesDestroyResponses = {
+    /**
+     * Сообщение удалено
+     */
+    204: void;
+};
+
+export type ChatsMessagesDestroyResponse = ChatsMessagesDestroyResponses[keyof ChatsMessagesDestroyResponses];
 
 export type ChatsCaregiverGroupsListData = {
     body?: never;

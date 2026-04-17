@@ -8,13 +8,18 @@ interface WsIncomingMessage {
     message: Message;
 }
 
+interface WsDeletedMessage {
+    type: "chat.message_deleted";
+    message_id: number;
+}
+
 interface WsErrorMessage {
     type: "error";
     code: string;
     detail: string;
 }
 
-type WsMessage = WsIncomingMessage | WsErrorMessage;
+type WsMessage = WsIncomingMessage | WsDeletedMessage | WsErrorMessage;
 
 export interface UseChatMessagesReturn {
     messages: Message[];
@@ -25,6 +30,7 @@ export interface UseChatMessagesReturn {
     sendError: string | null;
     loadMore: () => void;
     sendMessage: (content: string) => void;
+    deleteMessage: (messageId: number) => void;
 }
 
 function buildWsUrl(chatId: number, token: string): string {
@@ -76,6 +82,14 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
         wsRef.current.send(JSON.stringify({ content }));
     }, []);
 
+    const deleteMessage = useCallback((messageId: number) => {
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+            setSendError("Соединение потеряно. Перезагрузите страницу.");
+            return;
+        }
+        wsRef.current.send(JSON.stringify({ type: "delete", message_id: messageId }));
+    }, []);
+
     useEffect(() => {
         if (!chatId) return;
 
@@ -115,6 +129,12 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
                         const data = JSON.parse(event.data as string) as WsMessage;
                         if (data.type === "chat.message") {
                             setMessages(prev => [...prev, data.message]);
+                        } else if (data.type === "chat.message_deleted") {
+                            setMessages(prev =>
+                                prev.map(m =>
+                                    m.id === data.message_id ? { ...m, is_deleted: true, content: null } : m
+                                )
+                            );
                         }
                     } catch {
                         // Malformed frame — ignore
@@ -134,5 +154,5 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
         };
     }, [chatId]);
 
-    return { messages, isLoading, isLoadingMore, hasMore, error, sendError, loadMore, sendMessage };
+    return { messages, isLoading, isLoadingMore, hasMore, error, sendError, loadMore, sendMessage, deleteMessage };
 }
