@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { chatsGroupsList } from "@/client/sdk.gen";
-import { decodeJwtPayload } from "@/lib/jwt";
+import { decodeJwtPayload, isTokenExpired } from "@/lib/jwt";
 
 export async function GET() {
     const cookieStore = await cookies();
@@ -12,18 +11,13 @@ export async function GET() {
     }
 
     try {
-        decodeJwtPayload(accessToken);
+        const payload = decodeJwtPayload(accessToken);
+        if (isTokenExpired(payload)) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
     } catch {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await chatsGroupsList({
-        headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    if (error || !data) {
-        return NextResponse.json(error ?? { error: "Failed to fetch chat groups" }, { status: 500 });
-    }
-
-    return NextResponse.json(data);
+    return NextResponse.json({ token: accessToken });
 }

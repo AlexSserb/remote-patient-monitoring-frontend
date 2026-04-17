@@ -86,7 +86,7 @@ export function PatientChatList({ onSelectChat }: PatientChatListProps) {
                         px="md"
                         py="sm"
                         style={{ borderBottom: "1px solid var(--mantine-color-gray-2)" }}
-                        onClick={() => onSelectChat({ name, roleLabel })}>
+                        onClick={() => onSelectChat({ chatId: chat.id, name, roleLabel })}>
                         <Group>
                             <Avatar
                                 radius="xl"

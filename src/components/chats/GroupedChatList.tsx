@@ -2,14 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Alert, Avatar, Button, Center, Divider, Group, Loader, Stack, Text, UnstyledButton } from "@mantine/core";
-import type { ChatGroupMember, DoctorChatGroup } from "@/client/types.gen";
+import { IconArrowLeft } from "@tabler/icons-react";
+import type { CaregiverChatGroup, ChatGroupMember, DoctorChatGroup } from "@/client/types.gen";
 import type { SelectedChat } from "./ChatPanel";
 
-// Label for non-patient members depends on whose groups we're viewing:
-// a doctor sees caregivers; a caregiver sees doctors
-const OTHER_MEMBER_LABEL: Record<"doctor" | "caregiver", string> = {
-    doctor: "Опекун/Родственник",
-    caregiver: "Врач",
+type ChatGroup = DoctorChatGroup | CaregiverChatGroup;
+
+const DOCTOR_LABEL = "Врач";
+const CAREGIVER_LABEL = "Опекун/Родственник";
+
+const GROUP_API_URL: Record<"doctor" | "caregiver", string> = {
+    doctor: "/api/chats/doctor-groups",
+    caregiver: "/api/chats/caregiver-groups",
 };
 
 function getInitials(firstName: string, lastName: string): string {
@@ -83,19 +87,18 @@ interface GroupedChatListProps {
 }
 
 export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatListProps) {
-    const otherMemberLabel = OTHER_MEMBER_LABEL[currentUserRole];
-    const [groups, setGroups] = useState<DoctorChatGroup[]>([]);
-    const [selectedGroup, setSelectedGroup] = useState<DoctorChatGroup | null>(null);
+    const [groups, setGroups] = useState<ChatGroup[]>([]);
+    const [selectedGroup, setSelectedGroup] = useState<ChatGroup | null>(null);
     const [isLoading, setIsLoading] = useState(true); // true on mount — effect fires immediately
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch("/api/chats/groups")
+        fetch(GROUP_API_URL[currentUserRole])
             .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
-            .then((data: DoctorChatGroup[]) => setGroups(data))
+            .then((data: ChatGroup[]) => setGroups(data))
             .catch(() => setError("Не удалось загрузить чаты. Попробуйте позже."))
             .finally(() => setIsLoading(false));
-    }, []);
+    }, [currentUserRole]);
 
     if (isLoading) {
         return (
@@ -117,8 +120,30 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
 
     // Expanded group: show patient + all other members individually
     if (selectedGroup) {
-        const { patient, caregivers } = selectedGroup;
+        const { patient } = selectedGroup;
         const patientName = `${patient.first_name} ${patient.last_name}`;
+        const doctors = currentUserRole === "caregiver" ? (selectedGroup as CaregiverChatGroup).doctors : [];
+        const { caregivers } = selectedGroup;
+
+        function renderMemberRow(member: ChatGroupMember, roleLabel: string) {
+            return (
+                <MemberRow
+                    key={member.id}
+                    member={member}
+                    roleLabel={roleLabel}
+                    onClick={() =>
+                        member.chat_id !== null &&
+                        onSelectChat({
+                            chatId: member.chat_id,
+                            name: `${member.first_name} ${member.last_name}`,
+                            roleLabel,
+                            patientName,
+                        })
+                    }
+                />
+            );
+        }
+
         return (
             <>
                 <Divider />
@@ -129,8 +154,9 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
                     <Button
                         variant="outline"
                         size="sm"
+                        leftSection={<IconArrowLeft size={16} />}
                         onClick={() => setSelectedGroup(null)}>
-                        ← Назад
+                        Назад
                     </Button>
                     <Text fw={600}>Группа: {patientName}</Text>
                 </Group>
@@ -139,21 +165,13 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
                     <MemberRow
                         member={patient}
                         roleLabel="Пациент"
-                        onClick={() => onSelectChat({ name: patientName, roleLabel: "Пациент" })}
+                        onClick={() =>
+                            patient.chat_id !== null &&
+                            onSelectChat({ chatId: patient.chat_id, name: patientName, roleLabel: "Пациент" })
+                        }
                     />
-                    {caregivers.map(member => (
-                        <MemberRow
-                            key={member.id}
-                            member={member}
-                            roleLabel={otherMemberLabel}
-                            onClick={() =>
-                                onSelectChat({
-                                    name: `${member.first_name} ${member.last_name}`,
-                                    roleLabel: otherMemberLabel,
-                                })
-                            }
-                        />
-                    ))}
+                    {doctors.map(member => renderMemberRow(member, DOCTOR_LABEL))}
+                    {caregivers.map(member => renderMemberRow(member, CAREGIVER_LABEL))}
                 </Stack>
             </>
         );
@@ -173,8 +191,9 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
             <Divider />
             {groups.map(group => {
                 const { patient, caregivers } = group;
+                const doctors = currentUserRole === "caregiver" ? (group as CaregiverChatGroup).doctors : [];
                 const patientName = `${patient.first_name} ${patient.last_name}`;
-                const last = latestMessage([patient, ...caregivers]);
+                const last = latestMessage([patient, ...doctors, ...caregivers]);
                 return (
                     <UnstyledButton
                         key={patient.id}
