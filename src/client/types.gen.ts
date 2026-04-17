@@ -5,6 +5,62 @@ export type ClientOptions = {
 };
 
 /**
+ * Группа чатов опекуна — один пациент, его доктора и другие опекуны.
+ */
+export type CaregiverChatGroup = {
+    patient: ChatGroupMember;
+    doctors: Array<ChatGroupMember>;
+    caregivers: Array<ChatGroupMember>;
+};
+
+/**
+ * Участник группы чатов с id чата, временем и превью последнего сообщения.
+ */
+export type ChatGroupMember = {
+    id: number;
+    first_name: string;
+    last_name: string;
+    chat_id: number | null;
+    last_message_at: string | null;
+    last_message: LastMessagePreview | null;
+};
+
+/**
+ * Чат со сведениями о собеседнике — для плоского списка пациента.
+ */
+export type ChatItem = {
+    readonly id: number;
+    /**
+     * Возвращает данные собеседника (не текущего пользователя).
+     */
+    readonly interlocutor: {
+        [key: string]: unknown;
+    };
+    /**
+     * Возвращает превью последнего сообщения из аннотаций запроса.
+     */
+    readonly last_message: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Дата последнего сообщения
+     */
+    last_message_at?: string | null;
+    /**
+     * Дата создания
+     */
+    readonly created_at: string;
+};
+
+/**
+ * Группа чатов доктора — один пациент и все его опекуны.
+ */
+export type DoctorChatGroup = {
+    patient: ChatGroupMember;
+    caregivers: Array<ChatGroupMember>;
+};
+
+/**
  * Сериализатор запроса на смену email: проверяет уникальность и отправляет OTP на новый адрес.
  */
 export type EmailChangeRequest = {
@@ -19,6 +75,14 @@ export type EmailChangeVerify = {
 };
 
 /**
+ * Превью последнего сообщения для отображения в списке чатов.
+ */
+export type LastMessagePreview = {
+    content: string;
+    sender_name: string;
+};
+
+/**
  * Сериализатор первого шага: проверяет пароль, отправляет OTP, возвращает pre_auth_token.
  */
 export type Login = {
@@ -30,6 +94,44 @@ export type Login = {
  */
 export type Logout = {
     refresh: string;
+};
+
+/**
+ * Сообщение чата с данными отправителя.
+ */
+export type Message = {
+    readonly id: number;
+    sender: MessageSender;
+    /**
+     * Скрывает текст удалённого сообщения.
+     */
+    readonly content: string | null;
+    /**
+     * Удалено
+     */
+    is_deleted?: boolean;
+    readonly edited: boolean;
+    /**
+     * Дата отправки
+     */
+    readonly created_at: string;
+};
+
+/**
+ * Страница сообщений с флагом наличия более старых записей.
+ */
+export type MessagePage = {
+    results: Array<Message>;
+    has_more: boolean;
+};
+
+/**
+ * Краткие данные отправителя сообщения.
+ */
+export type MessageSender = {
+    id: number;
+    first_name: string;
+    last_name: string;
 };
 
 /**
@@ -126,11 +228,39 @@ export type VerifyOtp = {
 };
 
 /**
+ * Чат со сведениями о собеседнике — для плоского списка пациента.
+ */
+export type ChatItemWritable = {
+    /**
+     * Дата последнего сообщения
+     */
+    last_message_at?: string | null;
+};
+
+/**
  * Сериализатор первого шага: проверяет пароль, отправляет OTP, возвращает pre_auth_token.
  */
 export type LoginWritable = {
     email: string;
     password: string;
+};
+
+/**
+ * Сообщение чата с данными отправителя.
+ */
+export type MessageWritable = {
+    /**
+     * Удалено
+     */
+    is_deleted?: boolean;
+};
+
+/**
+ * Страница сообщений с флагом наличия более старых записей.
+ */
+export type MessagePageWritable = {
+    results: Array<MessageWritable>;
+    has_more: boolean;
 };
 
 /**
@@ -180,6 +310,158 @@ export type UserProfileWritable = {
      */
     role: RoleEnum;
 };
+
+export type ChatsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/chats/";
+};
+
+export type ChatsListErrors = {
+    /**
+     * Доступ запрещён — только для пациентов
+     */
+    403: unknown;
+};
+
+export type ChatsListResponses = {
+    200: Array<ChatItem>;
+};
+
+export type ChatsListResponse = ChatsListResponses[keyof ChatsListResponses];
+
+export type ChatsMessagesRetrieveData = {
+    body?: never;
+    path: {
+        chat_id: number;
+    };
+    query?: {
+        /**
+         * Загрузить сообщения старее указанного id (для скроллинга вверх)
+         */
+        before_id?: number;
+    };
+    url: "/api/chats/{chat_id}/messages/";
+};
+
+export type ChatsMessagesRetrieveErrors = {
+    /**
+     * Пользователь не является участником чата
+     */
+    403: unknown;
+    /**
+     * Чат не найден
+     */
+    404: unknown;
+};
+
+export type ChatsMessagesRetrieveResponses = {
+    200: MessagePage;
+};
+
+export type ChatsMessagesRetrieveResponse = ChatsMessagesRetrieveResponses[keyof ChatsMessagesRetrieveResponses];
+
+export type ChatsMessagesDestroyData = {
+    body?: never;
+    path: {
+        chat_id: number;
+        message_id: number;
+    };
+    query?: never;
+    url: "/api/chats/{chat_id}/messages/{message_id}/";
+};
+
+export type ChatsMessagesDestroyErrors = {
+    /**
+     * Нельзя удалить чужое сообщение или нет доступа к чату
+     */
+    403: unknown;
+    /**
+     * Сообщение не найдено
+     */
+    404: unknown;
+};
+
+export type ChatsMessagesDestroyResponses = {
+    /**
+     * Сообщение удалено
+     */
+    204: void;
+};
+
+export type ChatsMessagesDestroyResponse = ChatsMessagesDestroyResponses[keyof ChatsMessagesDestroyResponses];
+
+export type ChatsMessagesEditPartialUpdateData = {
+    body?: {
+        content: string;
+    };
+    path: {
+        chat_id: number;
+        message_id: number;
+    };
+    query?: never;
+    url: "/api/chats/{chat_id}/messages/{message_id}/edit/";
+};
+
+export type ChatsMessagesEditPartialUpdateErrors = {
+    /**
+     * Нельзя редактировать чужое сообщение или нет доступа к чату
+     */
+    403: unknown;
+    /**
+     * Сообщение не найдено или удалено
+     */
+    404: unknown;
+};
+
+export type ChatsMessagesEditPartialUpdateResponses = {
+    200: MessagePage;
+};
+
+export type ChatsMessagesEditPartialUpdateResponse =
+    ChatsMessagesEditPartialUpdateResponses[keyof ChatsMessagesEditPartialUpdateResponses];
+
+export type ChatsCaregiverGroupsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/chats/caregiver-groups/";
+};
+
+export type ChatsCaregiverGroupsListErrors = {
+    /**
+     * Доступ запрещён — только для опекунов
+     */
+    403: unknown;
+};
+
+export type ChatsCaregiverGroupsListResponses = {
+    200: Array<CaregiverChatGroup>;
+};
+
+export type ChatsCaregiverGroupsListResponse =
+    ChatsCaregiverGroupsListResponses[keyof ChatsCaregiverGroupsListResponses];
+
+export type ChatsDoctorGroupsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/chats/doctor-groups/";
+};
+
+export type ChatsDoctorGroupsListErrors = {
+    /**
+     * Доступ запрещён — только для докторов
+     */
+    403: unknown;
+};
+
+export type ChatsDoctorGroupsListResponses = {
+    200: Array<DoctorChatGroup>;
+};
+
+export type ChatsDoctorGroupsListResponse = ChatsDoctorGroupsListResponses[keyof ChatsDoctorGroupsListResponses];
 
 export type UsersRetrieveData = {
     body?: never;
@@ -412,7 +694,7 @@ export type UsersPatientsListData = {
          */
         page_size?: number;
         /**
-         * Поиск по имени или фамилии пациента (регистронезависимый).
+         * Поиск по имени, фамилии или email пациента (регистронезависимый).
          */
         search?: string;
     };

@@ -3,6 +3,24 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
+    ChatsCaregiverGroupsListData,
+    ChatsCaregiverGroupsListErrors,
+    ChatsCaregiverGroupsListResponses,
+    ChatsDoctorGroupsListData,
+    ChatsDoctorGroupsListErrors,
+    ChatsDoctorGroupsListResponses,
+    ChatsListData,
+    ChatsListErrors,
+    ChatsListResponses,
+    ChatsMessagesDestroyData,
+    ChatsMessagesDestroyErrors,
+    ChatsMessagesDestroyResponses,
+    ChatsMessagesEditPartialUpdateData,
+    ChatsMessagesEditPartialUpdateErrors,
+    ChatsMessagesEditPartialUpdateResponses,
+    ChatsMessagesRetrieveData,
+    ChatsMessagesRetrieveErrors,
+    ChatsMessagesRetrieveResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -51,6 +69,101 @@ export type Options<
      */
     meta?: Record<string, unknown>;
 };
+
+/**
+ * Список чатов пациента
+ *
+ * Возвращает плоский список чатов — только для пациентов.
+ */
+export const chatsList = <ThrowOnError extends boolean = false>(options?: Options<ChatsListData, ThrowOnError>) =>
+    (options?.client ?? client).get<ChatsListResponses, ChatsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/",
+        ...options,
+    });
+
+/**
+ * Список сообщений чата
+ *
+ * Возвращает страницу из 100 сообщений чата в порядке убывания id.
+ */
+export const chatsMessagesRetrieve = <ThrowOnError extends boolean = false>(
+    options: Options<ChatsMessagesRetrieveData, ThrowOnError>
+) =>
+    (options.client ?? client).get<ChatsMessagesRetrieveResponses, ChatsMessagesRetrieveErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/{chat_id}/messages/",
+        ...options,
+    });
+
+/**
+ * Удаление сообщения
+ *
+ * Помечает сообщение удалённым — только отправитель может удалить своё сообщение.
+ */
+export const chatsMessagesDestroy = <ThrowOnError extends boolean = false>(
+    options: Options<ChatsMessagesDestroyData, ThrowOnError>
+) =>
+    (options.client ?? client).delete<ChatsMessagesDestroyResponses, ChatsMessagesDestroyErrors, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/{chat_id}/messages/{message_id}/",
+        ...options,
+    });
+
+/**
+ * Редактирование сообщения
+ *
+ * Обновляет текст сообщения — только отправитель может редактировать своё сообщение.
+ */
+export const chatsMessagesEditPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<ChatsMessagesEditPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        ChatsMessagesEditPartialUpdateResponses,
+        ChatsMessagesEditPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/{chat_id}/messages/{message_id}/edit/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Группы чатов опекуна
+ *
+ * Возвращает группы чатов по пациентам — только для опекунов.
+ */
+export const chatsCaregiverGroupsList = <ThrowOnError extends boolean = false>(
+    options?: Options<ChatsCaregiverGroupsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<ChatsCaregiverGroupsListResponses, ChatsCaregiverGroupsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/caregiver-groups/",
+        ...options,
+    });
+
+/**
+ * Группы чатов доктора
+ *
+ * Возвращает группы чатов по пациентам — только для докторов.
+ */
+export const chatsDoctorGroupsList = <ThrowOnError extends boolean = false>(
+    options?: Options<ChatsDoctorGroupsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<ChatsDoctorGroupsListResponses, ChatsDoctorGroupsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/doctor-groups/",
+        ...options,
+    });
 
 /**
  * Профиль пользователя

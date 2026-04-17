@@ -7,9 +7,10 @@ import { Anchor, Burger, Group, Text } from "@mantine/core";
 interface AppHeaderProps {
     opened: boolean;
     onToggle: () => void;
+    onChatOpen: () => void;
 }
 
-export function AppHeader({ opened, onToggle }: AppHeaderProps) {
+export function AppHeader({ opened, onToggle, onChatOpen }: AppHeaderProps) {
     const pathname = usePathname();
 
     return (
@@ -31,13 +32,21 @@ export function AppHeader({ opened, onToggle }: AppHeaderProps) {
                 hiddenFrom="sm"
                 size="sm"
             />
-            <Anchor
-                component={Link}
-                href="/profile"
+            <Group
                 visibleFrom="sm"
-                fw={pathname === "/profile" ? 600 : 400}>
-                Профиль
-            </Anchor>
+                gap="md">
+                <Anchor
+                    component="button"
+                    onClick={onChatOpen}>
+                    Чаты
+                </Anchor>
+                <Anchor
+                    component={Link}
+                    href="/profile"
+                    fw={pathname === "/profile" ? 600 : 400}>
+                    Профиль
+                </Anchor>
+            </Group>
         </Group>
     );
 }

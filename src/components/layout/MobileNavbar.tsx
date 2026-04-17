@@ -9,11 +9,17 @@ import type { UserRole } from "@/lib/navigation";
 interface MobileNavbarProps {
     role: UserRole | undefined;
     onClose: () => void;
+    onChatOpen: () => void;
 }
 
-export function MobileNavbar({ role, onClose }: MobileNavbarProps) {
+export function MobileNavbar({ role, onClose, onChatOpen }: MobileNavbarProps) {
     const pathname = usePathname();
     const navItems = useNavItems(role);
+
+    function handleChatOpen() {
+        onClose();
+        onChatOpen();
+    }
 
     return (
         <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -34,6 +40,10 @@ export function MobileNavbar({ role, onClose }: MobileNavbarProps) {
                 ))}
             </Stack>
             <Divider />
+            <NavLink
+                label="Чаты"
+                onClick={handleChatOpen}
+            />
             <NavLink
                 component={Link}
                 href="/profile"
