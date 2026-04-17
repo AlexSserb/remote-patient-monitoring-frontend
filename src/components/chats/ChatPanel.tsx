@@ -17,7 +17,7 @@ import {
     Textarea,
     UnstyledButton,
 } from "@mantine/core";
-import { IconArrowLeft } from "@tabler/icons-react";
+import { IconArrowLeft, IconPencil, IconX } from "@tabler/icons-react";
 import type { Message } from "@/client/types.gen";
 import { useChatMessages } from "./hooks/useChatMessages";
 
@@ -152,6 +152,7 @@ function MessageBubble({ message, currentUserId, onShowMenu }: MessageBubbleProp
                         c={isOwn ? "blue.1" : "dimmed"}
                         ta="right"
                         mt={2}>
+                        {message.edited && !message.is_deleted && "(ред.) "}
                         {formatTime(message.created_at)}
                     </Text>
                 </Paper>
@@ -166,17 +167,35 @@ interface ContextMenuState {
     y: number;
 }
 
+interface EditingMessage {
+    id: number;
+    content: string;
+}
+
 interface MessageListProps {
     chatId: number;
     currentUserId: number | null;
 }
 
 function MessageList({ chatId, currentUserId }: MessageListProps) {
-    const { messages, isLoading, isLoadingMore, hasMore, error, sendError, loadMore, sendMessage, deleteMessage } =
-        useChatMessages(chatId);
+    const {
+        messages,
+        isLoading,
+        isLoadingMore,
+        hasMore,
+        error,
+        sendError,
+        loadMore,
+        sendMessage,
+        deleteMessage,
+        editMessage,
+    } = useChatMessages(chatId);
 
     const [inputValue, setInputValue] = useState("");
     const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+    const [editingMessage, setEditingMessage] = useState<EditingMessage | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const viewportRef = useRef<HTMLDivElement>(null);
 
     function handleShowMenu(messageId: number, x: number, y: number) {
         setContextMenu({ messageId, x, y });
@@ -186,7 +205,22 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
         if (contextMenu) deleteMessage(contextMenu.messageId);
         setContextMenu(null);
     }
-    const viewportRef = useRef<HTMLDivElement>(null);
+
+    function handleEditFromMenu() {
+        if (!contextMenu) return;
+        const msg = messages.find(m => m.id === contextMenu.messageId);
+        if (msg?.content) {
+            setEditingMessage({ id: msg.id, content: msg.content });
+            setInputValue(msg.content);
+            setTimeout(() => textareaRef.current?.focus(), 0);
+        }
+        setContextMenu(null);
+    }
+
+    function cancelEditing() {
+        setEditingMessage(null);
+        setInputValue("");
+    }
     const prevMessageCountRef = useRef(0);
 
     // Auto-scroll to bottom when new messages arrive at the end
@@ -211,11 +245,20 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
     function handleSend() {
         const trimmed = inputValue.trim();
         if (!trimmed) return;
-        sendMessage(trimmed);
+        if (editingMessage) {
+            editMessage(editingMessage.id, trimmed);
+            setEditingMessage(null);
+        } else {
+            sendMessage(trimmed);
+        }
         setInputValue("");
     }
 
     function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (e.key === "Escape") {
+            cancelEditing();
+            return;
+        }
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend();
@@ -289,11 +332,45 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
                 </Alert>
             )}
 
+            {editingMessage && (
+                <Group
+                    px="md"
+                    py="xs"
+                    gap="xs"
+                    style={{
+                        borderTop: "1px solid var(--mantine-color-gray-2)",
+                        background: "var(--mantine-color-blue-0)",
+                    }}>
+                    <IconPencil
+                        size={14}
+                        color="var(--mantine-color-blue-6)"
+                    />
+                    <Text
+                        size="xs"
+                        c="blue.7"
+                        style={{ flex: 1 }}
+                        truncate>
+                        {editingMessage.content.length > 60
+                            ? editingMessage.content.slice(0, 60) + "…"
+                            : editingMessage.content}
+                    </Text>
+                    <ActionIcon
+                        variant="subtle"
+                        size="xs"
+                        color="gray"
+                        onClick={cancelEditing}
+                        aria-label="Отменить редактирование">
+                        <IconX size={12} />
+                    </ActionIcon>
+                </Group>
+            )}
+
             <Group
                 p="sm"
                 gap="xs"
                 align="flex-end">
                 <Textarea
+                    ref={textareaRef}
                     style={{ flex: 1 }}
                     placeholder="Введите сообщение…"
                     autosize
@@ -331,6 +408,14 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
                             minWidth: 150,
                             overflow: "hidden",
                         }}>
+                        <UnstyledButton
+                            w="100%"
+                            px="md"
+                            py="xs"
+                            onClick={handleEditFromMenu}>
+                            <Text size="sm">Редактировать</Text>
+                        </UnstyledButton>
+                        <Divider />
                         <UnstyledButton
                             w="100%"
                             px="md"

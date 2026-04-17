@@ -13,13 +13,19 @@ interface WsDeletedMessage {
     message_id: number;
 }
 
+interface WsEditedMessage {
+    type: "chat.message_edited";
+    message_id: number;
+    content: string;
+}
+
 interface WsErrorMessage {
     type: "error";
     code: string;
     detail: string;
 }
 
-type WsMessage = WsIncomingMessage | WsDeletedMessage | WsErrorMessage;
+type WsMessage = WsIncomingMessage | WsDeletedMessage | WsEditedMessage | WsErrorMessage;
 
 export interface UseChatMessagesReturn {
     messages: Message[];
@@ -31,6 +37,7 @@ export interface UseChatMessagesReturn {
     loadMore: () => void;
     sendMessage: (content: string) => void;
     deleteMessage: (messageId: number) => void;
+    editMessage: (messageId: number, content: string) => void;
 }
 
 function buildWsUrl(chatId: number, token: string): string {
@@ -90,6 +97,14 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
         wsRef.current.send(JSON.stringify({ type: "delete", message_id: messageId }));
     }, []);
 
+    const editMessage = useCallback((messageId: number, content: string) => {
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+            setSendError("Соединение потеряно. Перезагрузите страницу.");
+            return;
+        }
+        wsRef.current.send(JSON.stringify({ type: "edit", message_id: messageId, content }));
+    }, []);
+
     useEffect(() => {
         if (!chatId) return;
 
@@ -135,6 +150,12 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
                                     m.id === data.message_id ? { ...m, is_deleted: true, content: null } : m
                                 )
                             );
+                        } else if (data.type === "chat.message_edited") {
+                            setMessages(prev =>
+                                prev.map(m =>
+                                    m.id === data.message_id ? { ...m, content: data.content, edited: true } : m
+                                )
+                            );
                         }
                     } catch {
                         // Malformed frame — ignore
@@ -154,5 +175,16 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
         };
     }, [chatId]);
 
-    return { messages, isLoading, isLoadingMore, hasMore, error, sendError, loadMore, sendMessage, deleteMessage };
+    return {
+        messages,
+        isLoading,
+        isLoadingMore,
+        hasMore,
+        error,
+        sendError,
+        loadMore,
+        sendMessage,
+        deleteMessage,
+        editMessage,
+    };
 }

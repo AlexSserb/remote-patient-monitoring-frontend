@@ -110,6 +110,7 @@ export type Message = {
      * Удалено
      */
     is_deleted?: boolean;
+    readonly edited: boolean;
     /**
      * Дата отправки
      */
@@ -390,6 +391,36 @@ export type ChatsMessagesDestroyResponses = {
 };
 
 export type ChatsMessagesDestroyResponse = ChatsMessagesDestroyResponses[keyof ChatsMessagesDestroyResponses];
+
+export type ChatsMessagesEditPartialUpdateData = {
+    body?: {
+        content: string;
+    };
+    path: {
+        chat_id: number;
+        message_id: number;
+    };
+    query?: never;
+    url: "/api/chats/{chat_id}/messages/{message_id}/edit/";
+};
+
+export type ChatsMessagesEditPartialUpdateErrors = {
+    /**
+     * Нельзя редактировать чужое сообщение или нет доступа к чату
+     */
+    403: unknown;
+    /**
+     * Сообщение не найдено или удалено
+     */
+    404: unknown;
+};
+
+export type ChatsMessagesEditPartialUpdateResponses = {
+    200: MessagePage;
+};
+
+export type ChatsMessagesEditPartialUpdateResponse =
+    ChatsMessagesEditPartialUpdateResponses[keyof ChatsMessagesEditPartialUpdateResponses];
 
 export type ChatsCaregiverGroupsListData = {
     body?: never;

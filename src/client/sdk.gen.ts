@@ -15,6 +15,9 @@ import type {
     ChatsMessagesDestroyData,
     ChatsMessagesDestroyErrors,
     ChatsMessagesDestroyResponses,
+    ChatsMessagesEditPartialUpdateData,
+    ChatsMessagesEditPartialUpdateErrors,
+    ChatsMessagesEditPartialUpdateResponses,
     ChatsMessagesRetrieveData,
     ChatsMessagesRetrieveErrors,
     ChatsMessagesRetrieveResponses,
@@ -107,6 +110,29 @@ export const chatsMessagesDestroy = <ThrowOnError extends boolean = false>(
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/chats/{chat_id}/messages/{message_id}/",
         ...options,
+    });
+
+/**
+ * Редактирование сообщения
+ *
+ * Обновляет текст сообщения — только отправитель может редактировать своё сообщение.
+ */
+export const chatsMessagesEditPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<ChatsMessagesEditPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        ChatsMessagesEditPartialUpdateResponses,
+        ChatsMessagesEditPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/chats/{chat_id}/messages/{message_id}/edit/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
     });
 
 /**
