@@ -11,6 +11,9 @@ interface UsePatientsPageParams {
     search: string;
     page: number;
     pageSize: number;
+    caregiverIds: number[];
+    doctorIds: number[];
+    diagnosisIds: number[];
 }
 
 interface UsePatientsPageResult {
@@ -26,6 +29,9 @@ export function usePatientsPage({
     search,
     page,
     pageSize,
+    caregiverIds,
+    doctorIds,
+    diagnosisIds,
 }: UsePatientsPageParams): UsePatientsPageResult {
     const [patients, setPatients] = useState<PatientListItem[]>([]);
     const [total, setTotal] = useState(0);
@@ -43,6 +49,9 @@ export function usePatientsPage({
         });
         if (attached) params.set("attached", "true");
         if (search) params.set("search", search);
+        caregiverIds.forEach(id => params.append("caregivers", String(id)));
+        doctorIds.forEach(id => params.append("doctors", String(id)));
+        diagnosisIds.forEach(id => params.append("diagnoses", String(id)));
 
         fetch(`/api/patients?${params.toString()}`)
             .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
@@ -52,7 +61,7 @@ export function usePatientsPage({
             })
             .catch(() => setError("Не удалось загрузить список пациентов. Попробуйте позже."))
             .finally(() => setIsLoading(false));
-    }, [attached, hasCaregiver, search, page, pageSize]);
+    }, [attached, hasCaregiver, search, page, pageSize, caregiverIds, doctorIds, diagnosisIds]);
 
     return { patients, total, isLoading, error };
 }

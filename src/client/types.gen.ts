@@ -53,6 +53,21 @@ export type ChatItem = {
 };
 
 /**
+ * Краткое представление диагноза для вложения в другие сериализаторы.
+ */
+export type DiagnosisShort = {
+    readonly id: number;
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код (МКБ)
+     */
+    code: string;
+};
+
+/**
  * Группа чатов доктора — один пациент и все его опекуны.
  */
 export type DoctorChatGroup = {
@@ -252,6 +267,22 @@ export type UserProfile = {
 };
 
 /**
+ * Краткое представление пользователя для списков фильтрации.
+ */
+export type UserShort = {
+    readonly id: number;
+    email: string;
+    /**
+     * Имя
+     */
+    first_name: string;
+    /**
+     * Фамилия
+     */
+    last_name: string;
+};
+
+/**
  * Сериализатор второго шага: проверяет OTP и выдаёт JWT-пару.
  */
 export type VerifyOtp = {
@@ -267,6 +298,20 @@ export type ChatItemWritable = {
      * Дата последнего сообщения
      */
     last_message_at?: string | null;
+};
+
+/**
+ * Краткое представление диагноза для вложения в другие сериализаторы.
+ */
+export type DiagnosisShortWritable = {
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код (МКБ)
+     */
+    code: string;
 };
 
 /**
@@ -344,6 +389,21 @@ export type UserProfileWritable = {
      * Роль
      */
     role: RoleEnum;
+};
+
+/**
+ * Краткое представление пользователя для списков фильтрации.
+ */
+export type UserShortWritable = {
+    email: string;
+    /**
+     * Имя
+     */
+    first_name: string;
+    /**
+     * Фамилия
+     */
+    last_name: string;
 };
 
 export type ChatsListData = {
@@ -497,6 +557,26 @@ export type ChatsDoctorGroupsListResponses = {
 };
 
 export type ChatsDoctorGroupsListResponse = ChatsDoctorGroupsListResponses[keyof ChatsDoctorGroupsListResponses];
+
+export type DiagnosesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/diagnoses/";
+};
+
+export type DiagnosesListErrors = {
+    /**
+     * Доступ запрещён — только для докторов и опекунов
+     */
+    403: unknown;
+};
+
+export type DiagnosesListResponses = {
+    200: Array<DiagnosisShort>;
+};
+
+export type DiagnosesListResponse = DiagnosesListResponses[keyof DiagnosesListResponses];
 
 export type UsersRetrieveData = {
     body?: never;
@@ -708,6 +788,32 @@ export type UsersAuthVerifyOtpCreateResponses = {
     200: unknown;
 };
 
+export type UsersCaregiversListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/users/caregivers/";
+};
+
+export type UsersCaregiversListResponses = {
+    200: Array<UserShort>;
+};
+
+export type UsersCaregiversListResponse = UsersCaregiversListResponses[keyof UsersCaregiversListResponses];
+
+export type UsersDoctorsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/users/doctors/";
+};
+
+export type UsersDoctorsListResponses = {
+    200: Array<UserShort>;
+};
+
+export type UsersDoctorsListResponse = UsersDoctorsListResponses[keyof UsersDoctorsListResponses];
+
 export type UsersPatientsListData = {
     body?: never;
     path?: never;
@@ -716,6 +822,18 @@ export type UsersPatientsListData = {
          * Только прикреплённые к текущему доктору пациенты. Для опекунов игнорируется.
          */
         attached?: boolean;
+        /**
+         * Фильтр по опекунам (повторяемый параметр): пациенты хотя бы одного из указанных опекунов.
+         */
+        caregivers?: Array<number>;
+        /**
+         * Фильтр по диагнозам (повторяемый параметр): пациенты хотя бы с одним из указанных диагнозов.
+         */
+        diagnoses?: Array<number>;
+        /**
+         * Фильтр по докторам (повторяемый параметр): пациенты хотя бы одного из указанных докторов.
+         */
+        doctors?: Array<number>;
         /**
          * Фильтр по наличию опекуна: all — все, yes — есть опекун, no — нет опекуна.
          */

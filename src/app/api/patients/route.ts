@@ -25,6 +25,9 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const page = searchParams.get("page");
     const page_size = searchParams.get("page_size");
+    const caregivers = searchParams.getAll("caregivers").map(Number).filter(Boolean);
+    const doctors = searchParams.getAll("doctors").map(Number).filter(Boolean);
+    const diagnoses = searchParams.getAll("diagnoses").map(Number).filter(Boolean);
 
     const { data, error } = await usersPatientsList({
         query: {
@@ -33,6 +36,9 @@ export async function GET(request: NextRequest) {
             search: search ?? undefined,
             page: page ? Number(page) : undefined,
             page_size: page_size ? Number(page_size) : undefined,
+            caregivers: caregivers.length ? caregivers : undefined,
+            doctors: doctors.length ? doctors : undefined,
+            diagnoses: diagnoses.length ? diagnoses : undefined,
         },
         headers: { Authorization: `Bearer ${accessToken}` },
     });

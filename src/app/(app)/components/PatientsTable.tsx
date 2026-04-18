@@ -8,6 +8,7 @@ import {
     Group,
     Loader,
     Modal,
+    MultiSelect,
     Pagination,
     Select,
     Stack,
@@ -20,6 +21,7 @@ import {
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import type { RoleEnum } from "@/client/types.gen";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
+import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
 import { NameListCell } from "./NameListCell";
 
 const PAGE_SIZE_DESKTOP = 20;
@@ -31,8 +33,13 @@ const HAS_CAREGIVER_OPTIONS = [
     { value: "no", label: "Нет опекуна/родственника" },
 ];
 
-// Дефолтные значения фильтров — сброс возвращает к ним же
-const FILTER_DEFAULTS: FilterDraft = { attached: true, hasCaregiver: "all" };
+const FILTER_DEFAULTS: FilterDraft = {
+    attached: true,
+    hasCaregiver: "all",
+    caregiverIds: [],
+    doctorIds: [],
+    diagnosisIds: [],
+};
 
 interface PatientsTableProps {
     role: RoleEnum;
@@ -41,12 +48,22 @@ interface PatientsTableProps {
 interface FilterDraft {
     attached: boolean;
     hasCaregiver: HasCaregiverFilter;
+    caregiverIds: number[];
+    doctorIds: number[];
+    diagnosisIds: number[];
 }
 
 export function PatientsTable({ role }: PatientsTableProps) {
+    const { options: caregiverOptions, isLoading: caregiverOptionsLoading } = useCaregiversOptions();
+    const { options: doctorOptions, isLoading: doctorOptionsLoading } = useDoctorsOptions();
+    const { options: diagnosisOptions, isLoading: diagnosisOptionsLoading } = useDiagnosesOptions();
+
     // Применённые фильтры (по умолчанию — только свои пациенты)
     const [attached, setAttached] = useState(FILTER_DEFAULTS.attached);
     const [hasCaregiver, setHasCaregiver] = useState<HasCaregiverFilter>(FILTER_DEFAULTS.hasCaregiver);
+    const [caregiverIds, setCaregiverIds] = useState<number[]>(FILTER_DEFAULTS.caregiverIds);
+    const [doctorIds, setDoctorIds] = useState<number[]>(FILTER_DEFAULTS.doctorIds);
+    const [diagnosisIds, setDiagnosisIds] = useState<number[]>(FILTER_DEFAULTS.diagnosisIds);
     const [page, setPage] = useState(1);
     const [searchInput, setSearchInput] = useState("");
     // Задержка 400 мс перед отправкой запроса, чтобы не бомбить сервер при вводе
@@ -75,19 +92,24 @@ export function PatientsTable({ role }: PatientsTableProps) {
         search: debouncedSearch,
         page,
         pageSize,
+        caregiverIds,
+        doctorIds,
+        diagnosisIds,
     });
 
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
     function handleOpenFilters() {
-        // Инициализировать черновик текущими значениями при открытии
-        setDraft({ attached, hasCaregiver });
+        setDraft({ attached, hasCaregiver, caregiverIds, doctorIds, diagnosisIds });
         openFilters();
     }
 
     function handleApplyFilters() {
         setAttached(draft.attached);
         setHasCaregiver(draft.hasCaregiver);
+        setCaregiverIds(draft.caregiverIds);
+        setDoctorIds(draft.doctorIds);
+        setDiagnosisIds(draft.diagnosisIds);
         setPage(1);
         closeFilters();
     }
@@ -96,6 +118,9 @@ export function PatientsTable({ role }: PatientsTableProps) {
         setDraft(FILTER_DEFAULTS);
         setAttached(FILTER_DEFAULTS.attached);
         setHasCaregiver(FILTER_DEFAULTS.hasCaregiver);
+        setCaregiverIds(FILTER_DEFAULTS.caregiverIds);
+        setDoctorIds(FILTER_DEFAULTS.doctorIds);
+        setDiagnosisIds(FILTER_DEFAULTS.diagnosisIds);
         setSearchInput("");
         setPage(1);
         closeFilters();
@@ -173,6 +198,33 @@ export function PatientsTable({ role }: PatientsTableProps) {
                         value={draft.hasCaregiver}
                         onChange={v => setDraft(d => ({ ...d, hasCaregiver: (v as HasCaregiverFilter) ?? "all" }))}
                         allowDeselect={false}
+                    />
+                    <MultiSelect
+                        label="Диагнозы"
+                        data={diagnosisOptions}
+                        value={draft.diagnosisIds.map(String)}
+                        onChange={v => setDraft(d => ({ ...d, diagnosisIds: v.map(Number) }))}
+                        disabled={diagnosisOptionsLoading}
+                        searchable
+                        clearable
+                    />
+                    <MultiSelect
+                        label="Доктора"
+                        data={doctorOptions}
+                        value={draft.doctorIds.map(String)}
+                        onChange={v => setDraft(d => ({ ...d, doctorIds: v.map(Number) }))}
+                        disabled={doctorOptionsLoading}
+                        searchable
+                        clearable
+                    />
+                    <MultiSelect
+                        label="Опекуны"
+                        data={caregiverOptions}
+                        value={draft.caregiverIds.map(String)}
+                        onChange={v => setDraft(d => ({ ...d, caregiverIds: v.map(Number) }))}
+                        disabled={caregiverOptionsLoading}
+                        searchable
+                        clearable
                     />
                     <Group
                         justify="space-between"

@@ -21,6 +21,9 @@ import type {
     ChatsMessagesRetrieveData,
     ChatsMessagesRetrieveErrors,
     ChatsMessagesRetrieveResponses,
+    DiagnosesListData,
+    DiagnosesListErrors,
+    DiagnosesListResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -29,6 +32,10 @@ import type {
     UsersAuthTokenRefreshCreateResponses,
     UsersAuthVerifyOtpCreateData,
     UsersAuthVerifyOtpCreateResponses,
+    UsersCaregiversListData,
+    UsersCaregiversListResponses,
+    UsersDoctorsListData,
+    UsersDoctorsListResponses,
     UsersEmailChangeCreateData,
     UsersEmailChangeCreateErrors,
     UsersEmailChangeCreateResponses,
@@ -162,6 +169,21 @@ export const chatsDoctorGroupsList = <ThrowOnError extends boolean = false>(
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/chats/doctor-groups/",
+        ...options,
+    });
+
+/**
+ * Список диагнозов
+ *
+ * Возвращает все диагнозы системы для использования в фильтрах.
+ */
+export const diagnosesList = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<DiagnosesListResponses, DiagnosesListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/",
         ...options,
     });
 
@@ -346,6 +368,36 @@ export const usersAuthVerifyOtpCreate = <ThrowOnError extends boolean = false>(
             "Content-Type": "application/json",
             ...options.headers,
         },
+    });
+
+/**
+ * Список опекунов
+ *
+ * Возвращает всех опекунов системы для использования в фильтрах.
+ */
+export const usersCaregiversList = <ThrowOnError extends boolean = false>(
+    options?: Options<UsersCaregiversListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<UsersCaregiversListResponses, unknown, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/caregivers/",
+        ...options,
+    });
+
+/**
+ * Список докторов
+ *
+ * Возвращает всех докторов системы для использования в фильтрах.
+ */
+export const usersDoctorsList = <ThrowOnError extends boolean = false>(
+    options?: Options<UsersDoctorsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<UsersDoctorsListResponses, unknown, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/doctors/",
+        ...options,
     });
 
 /**
