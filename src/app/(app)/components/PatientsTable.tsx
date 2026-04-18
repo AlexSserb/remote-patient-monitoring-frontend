@@ -20,6 +20,7 @@ import {
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import type { RoleEnum } from "@/client/types.gen";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
+import { NameListCell } from "./NameListCell";
 
 const PAGE_SIZE_DESKTOP = 20;
 const PAGE_SIZE_MOBILE = 7;
@@ -116,8 +117,30 @@ export function PatientsTable({ role }: PatientsTableProps) {
             <Table.Tr key={patient.id}>
                 <Table.Td>{patient.last_name}</Table.Td>
                 <Table.Td>{patient.first_name}</Table.Td>
-                <Table.Td>{patient.email}</Table.Td>
-                <Table.Td ta="center">{patient.caregiver_count}</Table.Td>
+                <Table.Td>
+                    <NameListCell
+                        items={patient.diagnoses.map(d => ({ label: d.code, tooltip: d.name }))}
+                        color="blue"
+                    />
+                </Table.Td>
+                <Table.Td>
+                    <NameListCell
+                        items={patient.doctors.map(d => ({
+                            label: d.last_name,
+                            tooltip: `${d.first_name} ${d.last_name}`,
+                        }))}
+                        color="teal"
+                    />
+                </Table.Td>
+                <Table.Td>
+                    <NameListCell
+                        items={patient.caregivers.map(c => ({
+                            label: c.last_name,
+                            tooltip: `${c.first_name} ${c.last_name}`,
+                        }))}
+                        color="grape"
+                    />
+                </Table.Td>
                 <Table.Td>{dateJoined}</Table.Td>
             </Table.Tr>
         );
@@ -224,8 +247,9 @@ export function PatientsTable({ role }: PatientsTableProps) {
                                 <Table.Tr>
                                     <Table.Th>Фамилия</Table.Th>
                                     <Table.Th>Имя</Table.Th>
-                                    <Table.Th>Email</Table.Th>
-                                    <Table.Th ta="center">Опекунов</Table.Th>
+                                    <Table.Th>Диагнозы</Table.Th>
+                                    <Table.Th>Доктора</Table.Th>
+                                    <Table.Th>Опекуны</Table.Th>
                                     <Table.Th>Дата регистрации</Table.Th>
                                 </Table.Tr>
                             </Table.Thead>

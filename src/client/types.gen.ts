@@ -156,7 +156,36 @@ export type PatchedUpdateProfile = {
 };
 
 /**
- * Сериализатор элемента списка пациентов: основные поля и количество опекунов.
+ * Опекун пациента с полями пользователя верхнего уровня для корректной генерации схемы.
+ */
+export type PatientCaregiver = {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+};
+
+/**
+ * Диагноз пациента с полями диагноза верхнего уровня для корректной генерации схемы.
+ */
+export type PatientDiagnosis = {
+    id: number;
+    name: string;
+    code: string;
+};
+
+/**
+ * Доктор пациента с полями пользователя верхнего уровня для корректной генерации схемы.
+ */
+export type PatientDoctor = {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+};
+
+/**
+ * Сериализатор элемента списка пациентов: основные поля, опекуны, доктора и диагнозы.
  */
 export type PatientListItem = {
     readonly id: number;
@@ -174,6 +203,9 @@ export type PatientListItem = {
      */
     readonly date_joined: string;
     caregiver_count: number;
+    diagnoses: Array<PatientDiagnosis>;
+    doctors: Array<PatientDoctor>;
+    caregivers: Array<PatientCaregiver>;
 };
 
 export type PatientListResponse = {
@@ -272,7 +304,7 @@ export type PasswordResetVerifyWritable = {
 };
 
 /**
- * Сериализатор элемента списка пациентов: основные поля и количество опекунов.
+ * Сериализатор элемента списка пациентов: основные поля, опекуны, доктора и диагнозы.
  */
 export type PatientListItemWritable = {
     email: string;
@@ -285,6 +317,9 @@ export type PatientListItemWritable = {
      */
     last_name: string;
     caregiver_count: number;
+    diagnoses: Array<PatientDiagnosis>;
+    doctors: Array<PatientDoctor>;
+    caregivers: Array<PatientCaregiver>;
 };
 
 export type PatientListResponseWritable = {
