@@ -21,6 +21,7 @@ export {
     usersPasswordResetCreate,
     usersPasswordResetVerifyCreate,
     usersPatientsList,
+    usersPatientsPartialUpdate,
     usersRetrieve,
 } from "./sdk.gen";
 export type {
@@ -73,6 +74,7 @@ export type {
     MessageWritable,
     PasswordResetVerify,
     PasswordResetVerifyWritable,
+    PatchedEditPatient,
     PatchedUpdateProfile,
     PatientCaregiver,
     PatientDiagnosis,
@@ -126,6 +128,10 @@ export type {
     UsersPatientsListErrors,
     UsersPatientsListResponse,
     UsersPatientsListResponses,
+    UsersPatientsPartialUpdateData,
+    UsersPatientsPartialUpdateErrors,
+    UsersPatientsPartialUpdateResponse,
+    UsersPatientsPartialUpdateResponses,
     UsersRetrieveData,
     UsersRetrieveErrors,
     UsersRetrieveResponse,

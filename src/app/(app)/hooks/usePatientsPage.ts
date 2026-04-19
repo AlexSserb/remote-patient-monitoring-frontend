@@ -14,6 +14,7 @@ interface UsePatientsPageParams {
     caregiverIds: number[];
     doctorIds: number[];
     diagnosisIds: number[];
+    refreshKey?: number;
 }
 
 interface UsePatientsPageResult {
@@ -32,6 +33,7 @@ export function usePatientsPage({
     caregiverIds,
     doctorIds,
     diagnosisIds,
+    refreshKey,
 }: UsePatientsPageParams): UsePatientsPageResult {
     const [patients, setPatients] = useState<PatientListItem[]>([]);
     const [total, setTotal] = useState(0);
@@ -61,7 +63,7 @@ export function usePatientsPage({
             })
             .catch(() => setError("Не удалось загрузить список пациентов. Попробуйте позже."))
             .finally(() => setIsLoading(false));
-    }, [attached, hasCaregiver, search, page, pageSize, caregiverIds, doctorIds, diagnosisIds]);
+    }, [attached, hasCaregiver, search, page, pageSize, caregiverIds, doctorIds, diagnosisIds, refreshKey]);
 
     return { patients, total, isLoading, error };
 }

@@ -157,6 +157,14 @@ export type PasswordResetVerify = {
 };
 
 /**
+ * Сериализатор редактирования пациента доктором: синхронизирует диагнозы и прикреплённых докторов.
+ */
+export type PatchedEditPatient = {
+    diagnoses?: Array<number>;
+    doctors?: Array<number>;
+};
+
+/**
  * Сериализатор обновления имени и фамилии пользователя.
  */
 export type PatchedUpdateProfile = {
@@ -866,3 +874,30 @@ export type UsersPatientsListResponses = {
 };
 
 export type UsersPatientsListResponse = UsersPatientsListResponses[keyof UsersPatientsListResponses];
+
+export type UsersPatientsPartialUpdateData = {
+    body?: PatchedEditPatient;
+    path: {
+        patient_id: number;
+    };
+    query?: never;
+    url: "/api/users/patients/{patient_id}/";
+};
+
+export type UsersPatientsPartialUpdateErrors = {
+    /**
+     * Доступ запрещён — только для прикреплённых докторов
+     */
+    403: unknown;
+    /**
+     * Пациент не найден
+     */
+    404: unknown;
+};
+
+export type UsersPatientsPartialUpdateResponses = {
+    200: PatientListItem;
+};
+
+export type UsersPatientsPartialUpdateResponse =
+    UsersPatientsPartialUpdateResponses[keyof UsersPatientsPartialUpdateResponses];

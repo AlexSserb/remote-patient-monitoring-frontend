@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+    ActionIcon,
     Alert,
     Button,
     Center,
@@ -19,10 +20,12 @@ import {
     Title,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
-import type { RoleEnum } from "@/client/types.gen";
+import type { PatientListItem, RoleEnum } from "@/client/types.gen";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
 import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
+import { IconEdit } from "@tabler/icons-react";
 import { NameListCell } from "./NameListCell";
+import { EditPatientModal } from "./EditPatientModal";
 
 const PAGE_SIZE_DESKTOP = 20;
 const PAGE_SIZE_MOBILE = 7;
@@ -57,6 +60,19 @@ export function PatientsTable({ role }: PatientsTableProps) {
     const { options: caregiverOptions, isLoading: caregiverOptionsLoading } = useCaregiversOptions();
     const { options: doctorOptions, isLoading: doctorOptionsLoading } = useDoctorsOptions();
     const { options: diagnosisOptions, isLoading: diagnosisOptionsLoading } = useDiagnosesOptions();
+
+    const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
+    const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    function handleOpenEdit(patient: PatientListItem) {
+        setEditingPatient(patient);
+        openEdit();
+    }
+
+    function handleEditSuccess() {
+        setRefreshKey(k => k + 1);
+    }
 
     // Применённые фильтры (по умолчанию — только свои пациенты)
     const [attached, setAttached] = useState(FILTER_DEFAULTS.attached);
@@ -95,6 +111,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
         caregiverIds,
         doctorIds,
         diagnosisIds,
+        refreshKey,
     });
 
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -167,12 +184,29 @@ export function PatientsTable({ role }: PatientsTableProps) {
                     />
                 </Table.Td>
                 <Table.Td>{dateJoined}</Table.Td>
+                {role === "doctor" && (
+                    <Table.Td>
+                        <ActionIcon
+                            variant="light"
+                            onClick={() => handleOpenEdit(patient)}
+                            aria-label="Редактировать пациента">
+                            <IconEdit />
+                        </ActionIcon>
+                    </Table.Td>
+                )}
             </Table.Tr>
         );
     });
 
     return (
         <>
+            <EditPatientModal
+                opened={editOpened}
+                patient={editingPatient}
+                onClose={closeEdit}
+                onSuccess={handleEditSuccess}
+            />
+
             {/* Модалка фильтров */}
             <Modal
                 opened={filtersOpened}
@@ -303,6 +337,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
                                     <Table.Th>Доктора</Table.Th>
                                     <Table.Th>Опекуны</Table.Th>
                                     <Table.Th>Дата регистрации</Table.Th>
+                                    {role === "doctor" && <Table.Th />}
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{rows}</Table.Tbody>

@@ -54,6 +54,9 @@ import type {
     UsersPatientsListData,
     UsersPatientsListErrors,
     UsersPatientsListResponses,
+    UsersPatientsPartialUpdateData,
+    UsersPatientsPartialUpdateErrors,
+    UsersPatientsPartialUpdateResponses,
     UsersRetrieveData,
     UsersRetrieveErrors,
     UsersRetrieveResponses,
@@ -413,4 +416,27 @@ export const usersPatientsList = <ThrowOnError extends boolean = false>(
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/users/patients/",
         ...options,
+    });
+
+/**
+ * Редактирование пациента доктором
+ *
+ * Обновляет диагнозы и список докторов пациента; доступно только прикреплённому доктору.
+ */
+export const usersPatientsPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersPatientsPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        UsersPatientsPartialUpdateResponses,
+        UsersPatientsPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/patients/{patient_id}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
     });
