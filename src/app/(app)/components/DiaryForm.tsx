@@ -14,6 +14,7 @@ interface DiaryFormProps {
     editingEntry: DiaryEntryInfo | null;
     onSubmitSuccess: () => void;
     onCancelEdit: () => void;
+    patientId?: number;
 }
 
 function buildInitialValues(fields: DiaryField[]): FormValues {
@@ -74,6 +75,7 @@ export function DiaryForm({
     editingEntry,
     onSubmitSuccess,
     onCancelEdit,
+    patientId,
 }: DiaryFormProps) {
     const isEditing = editingEntry !== null;
 
@@ -94,7 +96,8 @@ export function DiaryForm({
     function handleSubmit(values: FormValues) {
         const payload = { values: formValuesToPayload(values, fields) };
 
-        const url = isEditing ? `/api/diary-entries/${editingEntry.id}` : "/api/diary-entries";
+        const query = patientId !== undefined ? `?patient_id=${patientId}` : "";
+        const url = isEditing ? `/api/diary-entries/${editingEntry.id}${query}` : `/api/diary-entries${query}`;
         const method = isEditing ? "PATCH" : "POST";
 
         fetch(url, {

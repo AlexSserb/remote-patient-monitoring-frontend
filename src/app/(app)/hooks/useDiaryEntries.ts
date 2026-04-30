@@ -9,7 +9,7 @@ interface UseDiaryEntriesResult {
     error: string | null;
 }
 
-export function useDiaryEntries(refreshKey: number): UseDiaryEntriesResult {
+export function useDiaryEntries(refreshKey: number, patientId?: number): UseDiaryEntriesResult {
     const [entries, setEntries] = useState<DiaryEntryInfo[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -18,12 +18,14 @@ export function useDiaryEntries(refreshKey: number): UseDiaryEntriesResult {
         setIsLoading(true);
         setError(null);
 
-        fetch("/api/diary-entries")
+        const url = patientId !== undefined ? `/api/diary-entries?patient_id=${patientId}` : "/api/diary-entries";
+
+        fetch(url)
             .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
             .then((data: DiaryEntryInfo[]) => setEntries(data))
             .catch(() => setError("Не удалось загрузить записи дневника."))
             .finally(() => setIsLoading(false));
-    }, [refreshKey]);
+    }, [refreshKey, patientId]);
 
     return { entries, isLoading, error };
 }

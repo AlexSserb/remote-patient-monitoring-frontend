@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { diagnosesDiaryFieldsList } from "@/client/sdk.gen";
 import { decodeJwtPayload } from "@/lib/jwt";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
 
@@ -17,8 +17,12 @@ export async function GET() {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const patientIdParam = request.nextUrl.searchParams.get("patient_id");
+    const patientId = patientIdParam ? Number(patientIdParam) : undefined;
+
     const { data, error } = await diagnosesDiaryFieldsList({
         headers: { Authorization: `Bearer ${accessToken}` },
+        query: patientId !== undefined ? { patient_id: patientId } : undefined,
     });
 
     if (error || !data) {

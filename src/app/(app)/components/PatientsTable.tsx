@@ -18,12 +18,14 @@ import {
     Text,
     TextInput,
     Title,
+    Tooltip,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import type { PatientListItem, RoleEnum } from "@/client/types.gen";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
 import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
-import { IconEdit } from "@tabler/icons-react";
+import { IconEdit, IconNotebook } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { NameListCell } from "./NameListCell";
 import { EditPatientModal } from "./EditPatientModal";
 
@@ -57,6 +59,7 @@ interface FilterDraft {
 }
 
 export function PatientsTable({ role }: PatientsTableProps) {
+    const router = useRouter();
     const { options: caregiverOptions, isLoading: caregiverOptionsLoading } = useCaregiversOptions();
     const { options: doctorOptions, isLoading: doctorOptionsLoading } = useDoctorsOptions();
     const { options: diagnosisOptions, isLoading: diagnosisOptionsLoading } = useDiagnosesOptions();
@@ -192,6 +195,19 @@ export function PatientsTable({ role }: PatientsTableProps) {
                             aria-label="Редактировать пациента">
                             <IconEdit />
                         </ActionIcon>
+                    </Table.Td>
+                )}
+                {role === "caregiver" && (
+                    <Table.Td>
+                        <Tooltip label="Дневник пациента">
+                            <ActionIcon
+                                variant="light"
+                                color="blue"
+                                onClick={() => router.push(`/patient-diary/${patient.id}`)}
+                                aria-label="Дневник пациента">
+                                <IconNotebook />
+                            </ActionIcon>
+                        </Tooltip>
                     </Table.Td>
                 )}
             </Table.Tr>
@@ -338,6 +354,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
                                     <Table.Th>Опекуны</Table.Th>
                                     <Table.Th>Дата регистрации</Table.Th>
                                     {role === "doctor" && <Table.Th />}
+                                    {role === "caregiver" && <Table.Th />}
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{rows}</Table.Tbody>
