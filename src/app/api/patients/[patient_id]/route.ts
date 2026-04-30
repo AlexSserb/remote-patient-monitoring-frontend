@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const body: PatchedEditPatient = await request.json();
 
     const { data, error } = await usersPatientsPartialUpdate({
-        path: { patient_id: Number(patient_id) },
+        path: { patientId: Number(patient_id) },
         body,
         headers: { Authorization: `Bearer ${accessToken}` },
     });

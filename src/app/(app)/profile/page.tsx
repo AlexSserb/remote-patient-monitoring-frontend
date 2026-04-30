@@ -25,7 +25,7 @@ export default async function ProfilePage() {
     }
 
     const { data: profile, error } = await usersRetrieve({
-        path: { user_id: userId },
+        path: { userId },
         headers: { Authorization: `Bearer ${accessToken}` },
     });
 

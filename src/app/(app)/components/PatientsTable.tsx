@@ -153,12 +153,12 @@ export function PatientsTable({ role }: PatientsTableProps) {
             day: "numeric",
             month: "long",
             year: "numeric",
-        }).format(new Date(patient.date_joined));
+        }).format(new Date(patient.dateJoined));
 
         return (
             <Table.Tr key={patient.id}>
-                <Table.Td>{patient.last_name}</Table.Td>
-                <Table.Td>{patient.first_name}</Table.Td>
+                <Table.Td>{patient.lastName}</Table.Td>
+                <Table.Td>{patient.firstName}</Table.Td>
                 <Table.Td>
                     <NameListCell
                         items={patient.diagnoses.map(d => ({ label: d.code, tooltip: d.name }))}
@@ -168,8 +168,8 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 <Table.Td>
                     <NameListCell
                         items={patient.doctors.map(d => ({
-                            label: d.last_name,
-                            tooltip: `${d.first_name} ${d.last_name}`,
+                            label: d.lastName,
+                            tooltip: `${d.firstName} ${d.lastName}`,
                         }))}
                         color="teal"
                     />
@@ -177,8 +177,8 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 <Table.Td>
                     <NameListCell
                         items={patient.caregivers.map(c => ({
-                            label: c.last_name,
-                            tooltip: `${c.first_name} ${c.last_name}`,
+                            label: c.lastName,
+                            tooltip: `${c.firstName} ${c.lastName}`,
                         }))}
                         color="grape"
                     />

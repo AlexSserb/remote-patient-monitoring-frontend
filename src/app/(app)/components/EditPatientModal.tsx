@@ -50,7 +50,7 @@ export function EditPatientModal({ opened, patient, onClose, onSuccess }: EditPa
         });
     }
 
-    const title = patient ? `Пациент ${patient.last_name} ${patient.first_name}` : "Редактировать пациента";
+    const title = patient ? `Пациент ${patient.lastName} ${patient.firstName}` : "Редактировать пациента";
 
     return (
         <Modal

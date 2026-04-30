@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const body: PasswordResetVerifyWritable = await request.json();
 
     const { error } = await usersPasswordResetVerifyCreate({
-        path: { user_id: userId },
+        path: { userId },
         body,
         headers: { Authorization: `Bearer ${accessToken}` },
     });

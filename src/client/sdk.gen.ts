@@ -21,6 +21,21 @@ import type {
     ChatsMessagesRetrieveData,
     ChatsMessagesRetrieveErrors,
     ChatsMessagesRetrieveResponses,
+    DiagnosesDiaryEntriesCreateData,
+    DiagnosesDiaryEntriesCreateErrors,
+    DiagnosesDiaryEntriesCreateResponses,
+    DiagnosesDiaryEntriesDestroyData,
+    DiagnosesDiaryEntriesDestroyErrors,
+    DiagnosesDiaryEntriesDestroyResponses,
+    DiagnosesDiaryEntriesListData,
+    DiagnosesDiaryEntriesListErrors,
+    DiagnosesDiaryEntriesListResponses,
+    DiagnosesDiaryEntriesPartialUpdateData,
+    DiagnosesDiaryEntriesPartialUpdateErrors,
+    DiagnosesDiaryEntriesPartialUpdateResponses,
+    DiagnosesDiaryFieldsListData,
+    DiagnosesDiaryFieldsListErrors,
+    DiagnosesDiaryFieldsListResponses,
     DiagnosesListData,
     DiagnosesListErrors,
     DiagnosesListResponses,
@@ -104,7 +119,7 @@ export const chatsMessagesRetrieve = <ThrowOnError extends boolean = false>(
     (options.client ?? client).get<ChatsMessagesRetrieveResponses, ChatsMessagesRetrieveErrors, ThrowOnError>({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/chats/{chat_id}/messages/",
+        url: "/api/chats/{chatId}/messages/",
         ...options,
     });
 
@@ -118,7 +133,7 @@ export const chatsMessagesDestroy = <ThrowOnError extends boolean = false>(
 ) =>
     (options.client ?? client).delete<ChatsMessagesDestroyResponses, ChatsMessagesDestroyErrors, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/chats/{chat_id}/messages/{message_id}/",
+        url: "/api/chats/{chatId}/messages/{messageId}/",
         ...options,
     });
 
@@ -137,7 +152,7 @@ export const chatsMessagesEditPartialUpdate = <ThrowOnError extends boolean = fa
     >({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/chats/{chat_id}/messages/{message_id}/edit/",
+        url: "/api/chats/{chatId}/messages/{messageId}/edit/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -191,6 +206,100 @@ export const diagnosesList = <ThrowOnError extends boolean = false>(
     });
 
 /**
+ * Список записей дневника
+ *
+ * Возвращает все записи дневника пациента в обратном хронологическом порядке.
+ */
+export const diagnosesDiaryEntriesList = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesDiaryEntriesListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<DiagnosesDiaryEntriesListResponses, DiagnosesDiaryEntriesListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/",
+        ...options,
+    });
+
+/**
+ * Создание записи дневника
+ *
+ * Создаёт новую запись дневника с переданным набором значений метрик.
+ */
+export const diagnosesDiaryEntriesCreate = <ThrowOnError extends boolean = false>(
+    options: Options<DiagnosesDiaryEntriesCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        DiagnosesDiaryEntriesCreateResponses,
+        DiagnosesDiaryEntriesCreateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Удаление записи дневника
+ *
+ * Удаляет запись дневника вместе со всеми её значениями метрик.
+ */
+export const diagnosesDiaryEntriesDestroy = <ThrowOnError extends boolean = false>(
+    options: Options<DiagnosesDiaryEntriesDestroyData, ThrowOnError>
+) =>
+    (options.client ?? client).delete<
+        DiagnosesDiaryEntriesDestroyResponses,
+        DiagnosesDiaryEntriesDestroyErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/{id}/",
+        ...options,
+    });
+
+/**
+ * Обновление записи дневника
+ *
+ * Заменяет значения метрик в существующей записи дневника через upsert.
+ */
+export const diagnosesDiaryEntriesPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<DiagnosesDiaryEntriesPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        DiagnosesDiaryEntriesPartialUpdateResponses,
+        DiagnosesDiaryEntriesPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/{id}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Поля дневника для пациента
+ *
+ * Возвращает уникальные поля дневника, агрегированные по всем диагнозам пациента.
+ */
+export const diagnosesDiaryFieldsList = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesDiaryFieldsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<DiagnosesDiaryFieldsListResponses, DiagnosesDiaryFieldsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-fields/",
+        ...options,
+    });
+
+/**
  * Профиль пользователя
  *
  * Возвращает или обновляет профиль пользователя; доступен только владельцу аккаунта.
@@ -201,7 +310,7 @@ export const usersRetrieve = <ThrowOnError extends boolean = false>(
     (options.client ?? client).get<UsersRetrieveResponses, UsersRetrieveErrors, ThrowOnError>({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/",
+        url: "/api/users/{userId}/",
         ...options,
     });
 
@@ -216,7 +325,7 @@ export const usersPartialUpdate = <ThrowOnError extends boolean = false>(
     (options.client ?? client).patch<UsersPartialUpdateResponses, UsersPartialUpdateErrors, ThrowOnError>({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/",
+        url: "/api/users/{userId}/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -234,7 +343,7 @@ export const usersEmailChangeCreate = <ThrowOnError extends boolean = false>(
 ) =>
     (options.client ?? client).post<UsersEmailChangeCreateResponses, UsersEmailChangeCreateErrors, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/email-change/",
+        url: "/api/users/{userId}/email-change/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -257,7 +366,7 @@ export const usersEmailChangeVerifyCreate = <ThrowOnError extends boolean = fals
     >({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/email-change/verify/",
+        url: "/api/users/{userId}/email-change/verify/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -275,7 +384,7 @@ export const usersPasswordResetCreate = <ThrowOnError extends boolean = false>(
 ) =>
     (options.client ?? client).post<UsersPasswordResetCreateResponses, UsersPasswordResetCreateErrors, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/password-reset/",
+        url: "/api/users/{userId}/password-reset/",
         ...options,
     });
 
@@ -293,7 +402,7 @@ export const usersPasswordResetVerifyCreate = <ThrowOnError extends boolean = fa
         ThrowOnError
     >({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/password-reset/verify/",
+        url: "/api/users/{userId}/password-reset/verify/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -433,7 +542,7 @@ export const usersPatientsPartialUpdate = <ThrowOnError extends boolean = false>
     >({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/patients/{patient_id}/",
+        url: "/api/users/patients/{patientId}/",
         ...options,
         headers: {
             "Content-Type": "application/json",

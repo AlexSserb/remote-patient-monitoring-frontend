@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest) {
     const body: PatchedUpdateProfile = await request.json();
 
     const { data, error } = await usersPartialUpdate({
-        path: { user_id: userId },
+        path: { userId },
         body,
         headers: { Authorization: `Bearer ${accessToken}` },
     });

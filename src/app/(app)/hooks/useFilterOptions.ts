@@ -14,7 +14,7 @@ interface FilterOptionsResult {
 }
 
 function toUserOptions(users: UserShort[]): SelectOption[] {
-    return users.map(u => ({ value: String(u.id), label: `${u.last_name} ${u.first_name}` }));
+    return users.map(u => ({ value: String(u.id), label: `${u.lastName} ${u.firstName}` }));
 }
 
 function toDiagnosisOptions(diagnoses: DiagnosisShort[]): SelectOption[] {

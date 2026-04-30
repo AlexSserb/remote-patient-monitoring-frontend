@@ -22,7 +22,7 @@ export function useVerifyOtp(): UseVerifyOtpReturn {
         setIsLoading(true);
         setError(null);
 
-        return usersAuthVerifyOtpCreate({ body: { pre_auth_token: preAuthToken, otp } })
+        return usersAuthVerifyOtpCreate({ body: { preAuthToken, otp } })
             .then(({ data, error: apiError }) => {
                 if (apiError || !data) {
                     setError("Неверный или просроченный код");
