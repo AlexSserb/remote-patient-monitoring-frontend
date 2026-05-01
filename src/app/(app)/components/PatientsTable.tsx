@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-    ActionIcon,
     Alert,
     Button,
     Center,
@@ -18,16 +17,15 @@ import {
     Text,
     TextInput,
     Title,
-    Tooltip,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import type { PatientListItem, RoleEnum } from "@/client/types.gen";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
 import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
-import { IconEdit, IconNotebook } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
 import { NameListCell } from "./NameListCell";
 import { EditPatientModal } from "./EditPatientModal";
+import { DiaryButton } from "./DiaryButton";
+import { EditPatientButton } from "./EditPatientButton";
 
 const PAGE_SIZE_DESKTOP = 20;
 const PAGE_SIZE_MOBILE = 7;
@@ -59,7 +57,6 @@ interface FilterDraft {
 }
 
 export function PatientsTable({ role }: PatientsTableProps) {
-    const router = useRouter();
     const { options: caregiverOptions, isLoading: caregiverOptionsLoading } = useCaregiversOptions();
     const { options: doctorOptions, isLoading: doctorOptionsLoading } = useDoctorsOptions();
     const { options: diagnosisOptions, isLoading: diagnosisOptionsLoading } = useDiagnosesOptions();
@@ -189,25 +186,18 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 <Table.Td>{dateJoined}</Table.Td>
                 {role === "doctor" && (
                     <Table.Td>
-                        <ActionIcon
-                            variant="light"
-                            onClick={() => handleOpenEdit(patient)}
-                            aria-label="Редактировать пациента">
-                            <IconEdit />
-                        </ActionIcon>
+                        <Group gap="xs">
+                            <EditPatientButton
+                                patient={patient}
+                                onClick={handleOpenEdit}
+                            />
+                            <DiaryButton patientId={patient.id} />
+                        </Group>
                     </Table.Td>
                 )}
                 {role === "caregiver" && (
                     <Table.Td>
-                        <Tooltip label="Дневник пациента">
-                            <ActionIcon
-                                variant="light"
-                                color="blue"
-                                onClick={() => router.push(`/patient-diary/${patient.id}`)}
-                                aria-label="Дневник пациента">
-                                <IconNotebook />
-                            </ActionIcon>
-                        </Tooltip>
+                        <DiaryButton patientId={patient.id} />
                     </Table.Td>
                 )}
             </Table.Tr>

@@ -46,8 +46,8 @@ export function usePatientsPage({
 
         const params = new URLSearchParams({
             page: String(page),
-            page_size: String(pageSize),
-            has_caregiver: hasCaregiver,
+            pageSize: String(pageSize),
+            hasCaregiver: hasCaregiver,
         });
         if (attached) params.set("attached", "true");
         if (search) params.set("search", search);

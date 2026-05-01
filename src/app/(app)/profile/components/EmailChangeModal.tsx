@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Button, Group, Modal, PinInput, Stack, Text, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEmailChange } from "../hooks/useEmailChange";
+import {useState} from "react";
+import {Button, Group, Modal, PinInput, Stack, Text, TextInput} from "@mantine/core";
+import {useForm} from "@mantine/form";
+import {useEmailChange} from "../hooks/useEmailChange";
 
 interface EmailChangeModalProps {
     opened: boolean;
@@ -11,15 +11,15 @@ interface EmailChangeModalProps {
     onSuccess: () => void;
 }
 
-export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModalProps) {
+export function EmailChangeModal({opened, onClose, onSuccess}: EmailChangeModalProps) {
     const [step, setStep] = useState<"email" | "otp">("email");
     const [pendingEmail, setPendingEmail] = useState("");
-    const { requestChange, verifyChange, isLoading, error, resetError } = useEmailChange();
+    const {requestChange, verifyChange, isLoading, error, resetError} = useEmailChange();
 
     const emailForm = useForm({
-        initialValues: { new_email: "" },
+        initialValues: {newEmail: ""},
         validate: {
-            new_email: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
+            newEmail: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
         },
     });
 
@@ -30,10 +30,10 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
         onClose();
     }
 
-    function handleEmailSubmit(values: { new_email: string }) {
-        requestChange(values.new_email).then(ok => {
+    function handleEmailSubmit(values: { newEmail: string }) {
+        requestChange(values.newEmail).then(ok => {
             if (ok) {
-                setPendingEmail(values.new_email);
+                setPendingEmail(values.newEmail);
                 setStep("otp");
             }
         });
@@ -61,7 +61,7 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
                             label="Новый email"
                             type="email"
                             placeholder="example@mail.com"
-                            {...emailForm.getInputProps("new_email")}
+                            {...emailForm.getInputProps("newEmail")}
                         />
                         {error && (
                             <Text

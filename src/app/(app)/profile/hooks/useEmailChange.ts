@@ -21,12 +21,12 @@ export function useEmailChange(): UseEmailChangeReturn {
         return fetch("/api/profile/email-change", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ new_email: newEmail }),
+            body: JSON.stringify({ newEmail }),
         })
             .then(res => {
                 if (!res.ok) {
                     return res.json().then(data => {
-                        setError(data?.new_email?.[0] ?? "Не удалось отправить код. Попробуйте позже.");
+                        setError(data?.newEmail?.[0] ?? "Не удалось отправить код. Попробуйте позже.");
                         return false;
                     });
                 }

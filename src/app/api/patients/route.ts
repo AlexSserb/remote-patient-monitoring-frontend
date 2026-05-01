@@ -21,10 +21,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
 
     const attached = searchParams.get("attached");
-    const has_caregiver = searchParams.get("has_caregiver");
+    const hasCaregiver = searchParams.get("hasCaregiver");
     const search = searchParams.get("search");
     const page = searchParams.get("page");
-    const page_size = searchParams.get("page_size");
+    const pageSize = searchParams.get("pageSize");
     const caregivers = searchParams.getAll("caregivers").map(Number).filter(Boolean);
     const doctors = searchParams.getAll("doctors").map(Number).filter(Boolean);
     const diagnoses = searchParams.getAll("diagnoses").map(Number).filter(Boolean);
@@ -32,10 +32,10 @@ export async function GET(request: NextRequest) {
     const { data, error } = await usersPatientsList({
         query: {
             attached: attached === "true" ? true : attached === "false" ? false : undefined,
-            has_caregiver: (has_caregiver as "all" | "yes" | "no" | null) ?? undefined,
+            has_caregiver: (hasCaregiver as "all" | "yes" | "no" | null) ?? undefined,
             search: search ?? undefined,
             page: page ? Number(page) : undefined,
-            page_size: page_size ? Number(page_size) : undefined,
+            page_size: pageSize ? Number(pageSize) : undefined,
             caregivers: caregivers.length ? caregivers : undefined,
             doctors: doctors.length ? doctors : undefined,
             diagnoses: diagnoses.length ? diagnoses : undefined,
