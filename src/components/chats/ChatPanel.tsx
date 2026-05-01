@@ -84,13 +84,13 @@ function MessageBubble({ message, currentUserId, onShowMenu }: MessageBubbleProp
     const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     function handleContextMenu(e: React.MouseEvent) {
-        if (!isOwn || message.is_deleted) return;
+        if (!isOwn || message.isDeleted) return;
         e.preventDefault();
         onShowMenu(message.id, e.clientX, e.clientY);
     }
 
     function handleTouchStart(e: React.TouchEvent) {
-        if (!isOwn || message.is_deleted) return;
+        if (!isOwn || message.isDeleted) return;
         if (e.touches.length === 2) {
             e.preventDefault();
             onShowMenu(message.id, e.touches[0].clientX, e.touches[0].clientY);
@@ -120,7 +120,7 @@ function MessageBubble({ message, currentUserId, onShowMenu }: MessageBubbleProp
                         size="xs"
                         c="dimmed"
                         mb={2}>
-                        {message.sender.first_name} {message.sender.last_name}
+                        {message.sender.firstName} {message.sender.lastName}
                     </Text>
                 )}
                 <Paper
@@ -133,7 +133,7 @@ function MessageBubble({ message, currentUserId, onShowMenu }: MessageBubbleProp
                     onTouchEnd={cancelLongPress}
                     onTouchMove={cancelLongPress}
                     style={{ userSelect: "none" }}>
-                    {message.is_deleted ? (
+                    {message.isDeleted ? (
                         <Text
                             size="sm"
                             c={isOwn ? "blue.2" : "dimmed"}
@@ -152,8 +152,8 @@ function MessageBubble({ message, currentUserId, onShowMenu }: MessageBubbleProp
                         c={isOwn ? "blue.1" : "dimmed"}
                         ta="right"
                         mt={2}>
-                        {message.edited && !message.is_deleted && "(ред.) "}
-                        {formatTime(message.created_at)}
+                        {message.edited && !message.isDeleted && "(ред.) "}
+                        {formatTime(message.createdAt)}
                     </Text>
                 </Paper>
             </Box>
@@ -307,10 +307,10 @@ function MessageList({ chatId, currentUserId }: MessageListProps) {
                     </Center>
                 )}
                 {messages.map((msg, i) => {
-                    const showDate = i === 0 || !isSameDay(messages[i - 1].created_at, msg.created_at);
+                    const showDate = i === 0 || !isSameDay(messages[i - 1].createdAt, msg.createdAt);
                     return (
                         <Fragment key={msg.id}>
-                            {showDate && <DateSeparator isoString={msg.created_at} />}
+                            {showDate && <DateSeparator isoString={msg.createdAt} />}
                             <MessageBubble
                                 message={msg}
                                 currentUserId={currentUserId}

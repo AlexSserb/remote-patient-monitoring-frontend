@@ -11,6 +11,10 @@ interface UsePatientsPageParams {
     search: string;
     page: number;
     pageSize: number;
+    caregiverIds: number[];
+    doctorIds: number[];
+    diagnosisIds: number[];
+    refreshKey?: number;
 }
 
 interface UsePatientsPageResult {
@@ -26,6 +30,10 @@ export function usePatientsPage({
     search,
     page,
     pageSize,
+    caregiverIds,
+    doctorIds,
+    diagnosisIds,
+    refreshKey,
 }: UsePatientsPageParams): UsePatientsPageResult {
     const [patients, setPatients] = useState<PatientListItem[]>([]);
     const [total, setTotal] = useState(0);
@@ -38,11 +46,14 @@ export function usePatientsPage({
 
         const params = new URLSearchParams({
             page: String(page),
-            page_size: String(pageSize),
-            has_caregiver: hasCaregiver,
+            pageSize: String(pageSize),
+            hasCaregiver: hasCaregiver,
         });
         if (attached) params.set("attached", "true");
         if (search) params.set("search", search);
+        caregiverIds.forEach(id => params.append("caregivers", String(id)));
+        doctorIds.forEach(id => params.append("doctors", String(id)));
+        diagnosisIds.forEach(id => params.append("diagnoses", String(id)));
 
         fetch(`/api/patients?${params.toString()}`)
             .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
@@ -52,7 +63,7 @@ export function usePatientsPage({
             })
             .catch(() => setError("Не удалось загрузить список пациентов. Попробуйте позже."))
             .finally(() => setIsLoading(false));
-    }, [attached, hasCaregiver, search, page, pageSize]);
+    }, [attached, hasCaregiver, search, page, pageSize, caregiverIds, doctorIds, diagnosisIds, refreshKey]);
 
     return { patients, total, isLoading, error };
 }

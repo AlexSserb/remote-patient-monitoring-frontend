@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usersAuthLoginCreate } from "@/client/sdk.gen";
 
 interface LoginResponse {
-    pre_auth_token: string;
+    preAuthToken: string;
 }
 
 interface UseLoginReturn {
@@ -27,7 +27,7 @@ export function useLogin(): UseLoginReturn {
                     setError("Неверный email или пароль");
                     return null;
                 }
-                return (data as LoginResponse).pre_auth_token;
+                return (data as LoginResponse).preAuthToken;
             })
             .catch(() => {
                 setError("Ошибка соединения. Попробуйте позже.");

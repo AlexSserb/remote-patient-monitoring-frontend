@@ -42,14 +42,15 @@ export function usePasswordReset(): UsePasswordResetReturn {
         return fetch("/api/profile/password-reset/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ otp, new_password: newPassword }),
+            body: JSON.stringify({ otp, newPassword }),
         })
             .then(res => {
                 if (!res.ok) {
                     return res.json().then(data => {
                         const msg =
-                            data?.non_field_errors?.[0] ??
-                            data?.new_password?.[0] ??
+                            data?.nonFieldErrors?.[0] ??
+                            data?.newPassword?.[0] ??
+                            data?.otp?.[0] ??
                             "Не удалось сменить пароль. Попробуйте позже.";
                         setError(msg);
                         return false;

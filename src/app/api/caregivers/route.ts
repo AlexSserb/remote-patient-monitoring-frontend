@@ -1,10 +1,9 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { usersCaregiversList } from "@/client/sdk.gen";
 import { decodeJwtPayload } from "@/lib/jwt";
-import { usersPasswordResetCreate } from "@/client/sdk.gen";
 
-// POST /api/profile/password-reset — send OTP to current email
-export async function POST() {
+export async function GET() {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
 
@@ -12,21 +11,19 @@ export async function POST() {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let userId: number;
     try {
-        userId = decodeJwtPayload(accessToken).user_id;
+        decodeJwtPayload(accessToken);
     } catch {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error } = await usersPasswordResetCreate({
-        path: { userId },
+    const { data, error } = await usersCaregiversList({
         headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    if (error) {
-        return NextResponse.json(error, { status: 400 });
+    if (error || !data) {
+        return NextResponse.json(error ?? { error: "Failed to fetch caregivers" }, { status: 500 });
     }
 
-    return new NextResponse(null, { status: 204 });
+    return NextResponse.json(data);
 }

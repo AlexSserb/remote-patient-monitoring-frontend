@@ -2,26 +2,26 @@
 
 import { useState } from "react";
 
-interface UpdateProfilePayload {
-    firstName: string;
-    lastName: string;
+interface EditPatientPayload {
+    diagnoses: number[];
+    doctors: number[];
 }
 
-interface UseUpdateProfileReturn {
-    updateProfile: (payload: UpdateProfilePayload) => Promise<boolean>;
+interface UseEditPatientReturn {
+    editPatient: (patientId: number, payload: EditPatientPayload) => Promise<boolean>;
     isLoading: boolean;
     error: string | null;
 }
 
-export function useUpdateProfile(): UseUpdateProfileReturn {
+export function useEditPatient(): UseEditPatientReturn {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const updateProfile = (payload: UpdateProfilePayload): Promise<boolean> => {
+    const editPatient = (patientId: number, payload: EditPatientPayload): Promise<boolean> => {
         setIsLoading(true);
         setError(null);
 
-        return fetch("/api/profile", {
+        return fetch(`/api/patients/${patientId}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -42,5 +42,5 @@ export function useUpdateProfile(): UseUpdateProfileReturn {
             });
     };
 
-    return { updateProfile, isLoading, error };
+    return { editPatient, isLoading, error };
 }

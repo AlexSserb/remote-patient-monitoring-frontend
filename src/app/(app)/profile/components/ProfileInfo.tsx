@@ -38,15 +38,15 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
         router.refresh();
     }
 
-    const initials = [profile.first_name[0], profile.last_name[0]].filter(Boolean).join("").toUpperCase();
+    const initials = [profile.firstName[0], profile.lastName[0]].filter(Boolean).join("").toUpperCase();
 
-    const fullName = `${profile.first_name} ${profile.last_name}`.trim();
+    const fullName = `${profile.firstName} ${profile.lastName}`.trim();
 
     const dateJoined = new Intl.DateTimeFormat("ru-RU", {
         day: "numeric",
         month: "long",
         year: "numeric",
-    }).format(new Date(profile.date_joined));
+    }).format(new Date(profile.dateJoined));
 
     return (
         <>
@@ -138,8 +138,8 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
 
             <EditNameModal
                 opened={editNameOpened}
-                firstName={profile.first_name}
-                lastName={profile.last_name}
+                firstName={profile.firstName}
+                lastName={profile.lastName}
                 onClose={closeEditName}
                 onSuccess={handleUpdateSuccess}
             />

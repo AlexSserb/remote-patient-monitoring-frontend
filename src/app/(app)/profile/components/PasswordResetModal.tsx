@@ -16,10 +16,10 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
     const { sendOtp, resetPassword, isLoading, error, resetError } = usePasswordReset();
 
     const passwordForm = useForm({
-        initialValues: { new_password: "", confirm_password: "" },
+        initialValues: { newPassword: "", confirmPassword: "" },
         validate: {
-            new_password: v => (v.length >= 8 ? null : "Пароль должен содержать не менее 8 символов"),
-            confirm_password: (v, values) => (v === values.new_password ? null : "Пароли не совпадают"),
+            newPassword: v => (v.length >= 8 ? null : "Пароль должен содержать не менее 8 символов"),
+            confirmPassword: (v, values) => (v === values.newPassword ? null : "Пароли не совпадают"),
         },
     });
 
@@ -43,7 +43,7 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
     }
 
     function handlePasswordSubmit(values: typeof passwordForm.values) {
-        resetPassword(confirmedOtp, values.new_password).then(ok => {
+        resetPassword(confirmedOtp, values.newPassword).then(ok => {
             if (ok) handleClose();
         });
     }
@@ -131,11 +131,11 @@ export function PasswordResetModal({ opened, onClose }: PasswordResetModalProps)
                     <Stack gap="sm">
                         <PasswordInput
                             label="Новый пароль"
-                            {...passwordForm.getInputProps("new_password")}
+                            {...passwordForm.getInputProps("newPassword")}
                         />
                         <PasswordInput
                             label="Повторите пароль"
-                            {...passwordForm.getInputProps("confirm_password")}
+                            {...passwordForm.getInputProps("confirmPassword")}
                         />
                         {error && (
                             <Text

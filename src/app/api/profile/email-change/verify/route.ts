@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const body: EmailChangeVerify = await request.json();
 
     const { data, error } = await usersEmailChangeVerifyCreate({
-        path: { user_id: userId },
+        path: { userId },
         body,
         headers: { Authorization: `Bearer ${accessToken}` },
     });

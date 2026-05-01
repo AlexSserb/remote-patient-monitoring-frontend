@@ -73,7 +73,7 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
             .then(page => {
                 const older = [...page.results].reverse();
                 setMessages(prev => [...older, ...prev]);
-                setHasMore(page.has_more);
+                setHasMore(page.hasMore);
                 if (older.length > 0) oldestIdRef.current = older[0].id;
             })
             .catch(() => setError("Не удалось загрузить сообщения. Попробуйте позже."))
@@ -118,7 +118,7 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
                 if (cancelled) return;
                 const ordered = [...page.results].reverse();
                 setMessages(ordered);
-                setHasMore(page.has_more);
+                setHasMore(page.hasMore);
                 setError(null);
                 setSendError(null);
                 oldestIdRef.current = ordered[0]?.id ?? null;

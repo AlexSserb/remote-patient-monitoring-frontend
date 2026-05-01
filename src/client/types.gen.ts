@@ -18,11 +18,11 @@ export type CaregiverChatGroup = {
  */
 export type ChatGroupMember = {
     id: number;
-    first_name: string;
-    last_name: string;
-    chat_id: number | null;
-    last_message_at: string | null;
-    last_message: LastMessagePreview | null;
+    firstName: string;
+    lastName: string;
+    chatId: number | null;
+    lastMessageAt: string | null;
+    lastMessage: LastMessagePreview | null;
 };
 
 /**
@@ -39,17 +39,130 @@ export type ChatItem = {
     /**
      * Возвращает превью последнего сообщения из аннотаций запроса.
      */
-    readonly last_message: {
+    readonly lastMessage: {
         [key: string]: unknown;
     } | null;
     /**
      * Дата последнего сообщения
      */
-    last_message_at?: string | null;
+    lastMessageAt?: string | null;
     /**
      * Дата создания
      */
-    readonly created_at: string;
+    readonly createdAt: string;
+};
+
+/**
+ * Краткое представление диагноза для вложения в другие сериализаторы.
+ */
+export type DiagnosisShort = {
+    readonly id: number;
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код (МКБ)
+     */
+    code: string;
+};
+
+/**
+ * Автор записи дневника — пациент или опекун, создавший запись.
+ */
+export type DiaryEntryAuthorInfo = {
+    readonly id: number;
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
+    /**
+     * Роль
+     */
+    role: RoleEnum;
+};
+
+/**
+ * Тело запроса для создания или обновления записи дневника.
+ */
+export type DiaryEntryCreate = {
+    values: Array<DiaryEntryValueCreate>;
+};
+
+/**
+ * Запись дневника с вложенными значениями метрик.
+ */
+export type DiaryEntryInfo = {
+    readonly id: number;
+    /**
+     * Дата записи
+     */
+    readonly createdAt: string;
+    author: DiaryEntryAuthorInfo;
+    readonly values: Array<DiaryEntryValueInfo>;
+};
+
+/**
+ * Значение одной метрики в создаваемой или обновляемой записи дневника.
+ */
+export type DiaryEntryValueCreate = {
+    metricId: number;
+    valueNumber?: number | null;
+    valueText?: string;
+    valueBoolean?: boolean | null;
+};
+
+/**
+ * Значение метрики в составе ответа на запрос записи дневника.
+ */
+export type DiaryEntryValueInfo = {
+    readonly metricId: number;
+    readonly metricName: string;
+    readonly metricCode: string;
+    readonly metricType: string;
+    readonly metricUnit: string;
+    /**
+     * Числовое значение
+     */
+    valueNumber?: number | null;
+    /**
+     * Текстовое значение
+     */
+    valueText?: string;
+    /**
+     * Булево значение
+     */
+    valueBoolean?: boolean | null;
+};
+
+/**
+ * Поле дневника с агрегированными ограничениями по всем диагнозам пациента.
+ */
+export type DiaryField = {
+    readonly id: number;
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код
+     */
+    code: string;
+    /**
+     * Единица измерения
+     */
+    unit?: string;
+    /**
+     * Тип значения
+     */
+    type: TypeEnum;
+    isRequired: boolean;
+    minValue: number | null;
+    maxValue: number | null;
 };
 
 /**
@@ -64,7 +177,7 @@ export type DoctorChatGroup = {
  * Сериализатор запроса на смену email: проверяет уникальность и отправляет OTP на новый адрес.
  */
 export type EmailChangeRequest = {
-    new_email: string;
+    newEmail: string;
 };
 
 /**
@@ -79,7 +192,7 @@ export type EmailChangeVerify = {
  */
 export type LastMessagePreview = {
     content: string;
-    sender_name: string;
+    senderName: string;
 };
 
 /**
@@ -109,12 +222,12 @@ export type Message = {
     /**
      * Удалено
      */
-    is_deleted?: boolean;
+    isDeleted?: boolean;
     readonly edited: boolean;
     /**
      * Дата отправки
      */
-    readonly created_at: string;
+    readonly createdAt: string;
 };
 
 /**
@@ -122,7 +235,7 @@ export type Message = {
  */
 export type MessagePage = {
     results: Array<Message>;
-    has_more: boolean;
+    hasMore: boolean;
 };
 
 /**
@@ -130,8 +243,8 @@ export type MessagePage = {
  */
 export type MessageSender = {
     id: number;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
 };
 
 /**
@@ -142,21 +255,65 @@ export type PasswordResetVerify = {
 };
 
 /**
+ * Тело запроса для создания или обновления записи дневника.
+ */
+export type PatchedDiaryEntryCreate = {
+    values?: Array<DiaryEntryValueCreate>;
+};
+
+/**
+ * Сериализатор редактирования пациента доктором: синхронизирует диагнозы и прикреплённых докторов.
+ */
+export type PatchedEditPatient = {
+    diagnoses?: Array<number>;
+    doctors?: Array<number>;
+};
+
+/**
  * Сериализатор обновления имени и фамилии пользователя.
  */
 export type PatchedUpdateProfile = {
     /**
      * Имя
      */
-    first_name?: string;
+    firstName?: string;
     /**
      * Фамилия
      */
-    last_name?: string;
+    lastName?: string;
 };
 
 /**
- * Сериализатор элемента списка пациентов: основные поля и количество опекунов.
+ * Опекун пациента с полями пользователя верхнего уровня для корректной генерации схемы.
+ */
+export type PatientCaregiver = {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+};
+
+/**
+ * Диагноз пациента с полями диагноза верхнего уровня для корректной генерации схемы.
+ */
+export type PatientDiagnosis = {
+    id: number;
+    name: string;
+    code: string;
+};
+
+/**
+ * Доктор пациента с полями пользователя верхнего уровня для корректной генерации схемы.
+ */
+export type PatientDoctor = {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+};
+
+/**
+ * Сериализатор элемента списка пациентов: основные поля, опекуны, доктора и диагнозы.
  */
 export type PatientListItem = {
     readonly id: number;
@@ -164,16 +321,19 @@ export type PatientListItem = {
     /**
      * Имя
      */
-    first_name: string;
+    firstName: string;
     /**
      * Фамилия
      */
-    last_name: string;
+    lastName: string;
     /**
      * Дата регистрации
      */
-    readonly date_joined: string;
-    caregiver_count: number;
+    readonly dateJoined: string;
+    caregiverCount: number;
+    diagnoses: Array<PatientDiagnosis>;
+    doctors: Array<PatientDoctor>;
+    caregivers: Array<PatientCaregiver>;
 };
 
 export type PatientListResponse = {
@@ -196,6 +356,13 @@ export type TokenRefresh = {
 };
 
 /**
+ * * `number` - Число
+ * * `boolean` - Да/Нет
+ * * `text` - Текст
+ */
+export type TypeEnum = "number" | "boolean" | "text";
+
+/**
  * Сериализатор профиля пользователя для отображения публичных данных.
  */
 export type UserProfile = {
@@ -204,11 +371,11 @@ export type UserProfile = {
     /**
      * Имя
      */
-    first_name: string;
+    firstName: string;
     /**
      * Фамилия
      */
-    last_name: string;
+    lastName: string;
     /**
      * Роль
      */
@@ -216,14 +383,30 @@ export type UserProfile = {
     /**
      * Дата регистрации
      */
-    readonly date_joined: string;
+    readonly dateJoined: string;
+};
+
+/**
+ * Краткое представление пользователя для списков фильтрации.
+ */
+export type UserShort = {
+    readonly id: number;
+    email: string;
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
 };
 
 /**
  * Сериализатор второго шага: проверяет OTP и выдаёт JWT-пару.
  */
 export type VerifyOtp = {
-    pre_auth_token: string;
+    preAuthToken: string;
     otp: string;
 };
 
@@ -234,7 +417,89 @@ export type ChatItemWritable = {
     /**
      * Дата последнего сообщения
      */
-    last_message_at?: string | null;
+    lastMessageAt?: string | null;
+};
+
+/**
+ * Краткое представление диагноза для вложения в другие сериализаторы.
+ */
+export type DiagnosisShortWritable = {
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код (МКБ)
+     */
+    code: string;
+};
+
+/**
+ * Автор записи дневника — пациент или опекун, создавший запись.
+ */
+export type DiaryEntryAuthorInfoWritable = {
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
+    /**
+     * Роль
+     */
+    role: RoleEnum;
+};
+
+/**
+ * Запись дневника с вложенными значениями метрик.
+ */
+export type DiaryEntryInfoWritable = {
+    [key: string]: unknown;
+};
+
+/**
+ * Значение метрики в составе ответа на запрос записи дневника.
+ */
+export type DiaryEntryValueInfoWritable = {
+    /**
+     * Числовое значение
+     */
+    valueNumber?: number | null;
+    /**
+     * Текстовое значение
+     */
+    valueText?: string;
+    /**
+     * Булево значение
+     */
+    valueBoolean?: boolean | null;
+};
+
+/**
+ * Поле дневника с агрегированными ограничениями по всем диагнозам пациента.
+ */
+export type DiaryFieldWritable = {
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код
+     */
+    code: string;
+    /**
+     * Единица измерения
+     */
+    unit?: string;
+    /**
+     * Тип значения
+     */
+    type: TypeEnum;
+    isRequired: boolean;
+    minValue: number | null;
+    maxValue: number | null;
 };
 
 /**
@@ -252,7 +517,7 @@ export type MessageWritable = {
     /**
      * Удалено
      */
-    is_deleted?: boolean;
+    isDeleted?: boolean;
 };
 
 /**
@@ -260,7 +525,7 @@ export type MessageWritable = {
  */
 export type MessagePageWritable = {
     results: Array<MessageWritable>;
-    has_more: boolean;
+    hasMore: boolean;
 };
 
 /**
@@ -268,23 +533,26 @@ export type MessagePageWritable = {
  */
 export type PasswordResetVerifyWritable = {
     otp: string;
-    new_password: string;
+    newPassword: string;
 };
 
 /**
- * Сериализатор элемента списка пациентов: основные поля и количество опекунов.
+ * Сериализатор элемента списка пациентов: основные поля, опекуны, доктора и диагнозы.
  */
 export type PatientListItemWritable = {
     email: string;
     /**
      * Имя
      */
-    first_name: string;
+    firstName: string;
     /**
      * Фамилия
      */
-    last_name: string;
-    caregiver_count: number;
+    lastName: string;
+    caregiverCount: number;
+    diagnoses: Array<PatientDiagnosis>;
+    doctors: Array<PatientDoctor>;
+    caregivers: Array<PatientCaregiver>;
 };
 
 export type PatientListResponseWritable = {
@@ -300,15 +568,30 @@ export type UserProfileWritable = {
     /**
      * Имя
      */
-    first_name: string;
+    firstName: string;
     /**
      * Фамилия
      */
-    last_name: string;
+    lastName: string;
     /**
      * Роль
      */
     role: RoleEnum;
+};
+
+/**
+ * Краткое представление пользователя для списков фильтрации.
+ */
+export type UserShortWritable = {
+    email: string;
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
 };
 
 export type ChatsListData = {
@@ -334,7 +617,7 @@ export type ChatsListResponse = ChatsListResponses[keyof ChatsListResponses];
 export type ChatsMessagesRetrieveData = {
     body?: never;
     path: {
-        chat_id: number;
+        chatId: number;
     };
     query?: {
         /**
@@ -342,7 +625,7 @@ export type ChatsMessagesRetrieveData = {
          */
         before_id?: number;
     };
-    url: "/api/chats/{chat_id}/messages/";
+    url: "/api/chats/{chatId}/messages/";
 };
 
 export type ChatsMessagesRetrieveErrors = {
@@ -365,11 +648,11 @@ export type ChatsMessagesRetrieveResponse = ChatsMessagesRetrieveResponses[keyof
 export type ChatsMessagesDestroyData = {
     body?: never;
     path: {
-        chat_id: number;
-        message_id: number;
+        chatId: number;
+        messageId: number;
     };
     query?: never;
-    url: "/api/chats/{chat_id}/messages/{message_id}/";
+    url: "/api/chats/{chatId}/messages/{messageId}/";
 };
 
 export type ChatsMessagesDestroyErrors = {
@@ -397,11 +680,11 @@ export type ChatsMessagesEditPartialUpdateData = {
         content: string;
     };
     path: {
-        chat_id: number;
-        message_id: number;
+        chatId: number;
+        messageId: number;
     };
     query?: never;
-    url: "/api/chats/{chat_id}/messages/{message_id}/edit/";
+    url: "/api/chats/{chatId}/messages/{messageId}/edit/";
 };
 
 export type ChatsMessagesEditPartialUpdateErrors = {
@@ -463,13 +746,198 @@ export type ChatsDoctorGroupsListResponses = {
 
 export type ChatsDoctorGroupsListResponse = ChatsDoctorGroupsListResponses[keyof ChatsDoctorGroupsListResponses];
 
+export type DiagnosesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/diagnoses/";
+};
+
+export type DiagnosesListErrors = {
+    /**
+     * Доступ запрещён — только для докторов и опекунов
+     */
+    403: unknown;
+};
+
+export type DiagnosesListResponses = {
+    200: Array<DiagnosisShort>;
+};
+
+export type DiagnosesListResponse = DiagnosesListResponses[keyof DiagnosesListResponses];
+
+export type DiagnosesDiaryEntriesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * ID пациента — обязателен для опекуна, игнорируется для пациента
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/diary-entries/";
+};
+
+export type DiagnosesDiaryEntriesListErrors = {
+    /**
+     * Не передан patient_id (для опекуна)
+     */
+    400: unknown;
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type DiagnosesDiaryEntriesListResponses = {
+    200: Array<DiaryEntryInfo>;
+};
+
+export type DiagnosesDiaryEntriesListResponse =
+    DiagnosesDiaryEntriesListResponses[keyof DiagnosesDiaryEntriesListResponses];
+
+export type DiagnosesDiaryEntriesCreateData = {
+    body: DiaryEntryCreate;
+    path?: never;
+    query?: {
+        /**
+         * ID пациента — обязателен для опекуна
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/diary-entries/";
+};
+
+export type DiagnosesDiaryEntriesCreateErrors = {
+    /**
+     * Ошибка валидации
+     */
+    400: unknown;
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+};
+
+export type DiagnosesDiaryEntriesCreateResponses = {
+    201: DiaryEntryInfo;
+};
+
+export type DiagnosesDiaryEntriesCreateResponse =
+    DiagnosesDiaryEntriesCreateResponses[keyof DiagnosesDiaryEntriesCreateResponses];
+
+export type DiagnosesDiaryEntriesDestroyData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: {
+        /**
+         * ID пациента — обязателен для опекуна
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/diary-entries/{id}/";
+};
+
+export type DiagnosesDiaryEntriesDestroyErrors = {
+    /**
+     * Доступ запрещён или запись принадлежит другому пациенту
+     */
+    403: unknown;
+    /**
+     * Запись не найдена
+     */
+    404: unknown;
+};
+
+export type DiagnosesDiaryEntriesDestroyResponses = {
+    /**
+     * Запись удалена
+     */
+    204: void;
+};
+
+export type DiagnosesDiaryEntriesDestroyResponse =
+    DiagnosesDiaryEntriesDestroyResponses[keyof DiagnosesDiaryEntriesDestroyResponses];
+
+export type DiagnosesDiaryEntriesPartialUpdateData = {
+    body?: PatchedDiaryEntryCreate;
+    path: {
+        id: number;
+    };
+    query?: {
+        /**
+         * ID пациента — обязателен для опекуна
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/diary-entries/{id}/";
+};
+
+export type DiagnosesDiaryEntriesPartialUpdateErrors = {
+    /**
+     * Ошибка валидации
+     */
+    400: unknown;
+    /**
+     * Доступ запрещён или запись принадлежит другому пациенту
+     */
+    403: unknown;
+    /**
+     * Запись не найдена
+     */
+    404: unknown;
+};
+
+export type DiagnosesDiaryEntriesPartialUpdateResponses = {
+    200: DiaryEntryInfo;
+};
+
+export type DiagnosesDiaryEntriesPartialUpdateResponse =
+    DiagnosesDiaryEntriesPartialUpdateResponses[keyof DiagnosesDiaryEntriesPartialUpdateResponses];
+
+export type DiagnosesDiaryFieldsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * ID пациента — обязателен для опекуна, игнорируется для пациента
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/diary-fields/";
+};
+
+export type DiagnosesDiaryFieldsListErrors = {
+    /**
+     * Не передан patient_id (для опекуна)
+     */
+    400: unknown;
+    /**
+     * Доступ запрещён или опекун не закреплён за пациентом
+     */
+    403: unknown;
+    /**
+     * Пациент не найден
+     */
+    404: unknown;
+};
+
+export type DiagnosesDiaryFieldsListResponses = {
+    200: Array<DiaryField>;
+};
+
+export type DiagnosesDiaryFieldsListResponse =
+    DiagnosesDiaryFieldsListResponses[keyof DiagnosesDiaryFieldsListResponses];
+
 export type UsersRetrieveData = {
     body?: never;
     path: {
-        user_id: number;
+        userId: number;
     };
     query?: never;
-    url: "/api/users/{user_id}/";
+    url: "/api/users/{userId}/";
 };
 
 export type UsersRetrieveErrors = {
@@ -492,10 +960,10 @@ export type UsersRetrieveResponse = UsersRetrieveResponses[keyof UsersRetrieveRe
 export type UsersPartialUpdateData = {
     body?: PatchedUpdateProfile;
     path: {
-        user_id: number;
+        userId: number;
     };
     query?: never;
-    url: "/api/users/{user_id}/";
+    url: "/api/users/{userId}/";
 };
 
 export type UsersPartialUpdateErrors = {
@@ -518,10 +986,10 @@ export type UsersPartialUpdateResponse = UsersPartialUpdateResponses[keyof Users
 export type UsersEmailChangeCreateData = {
     body: EmailChangeRequest;
     path: {
-        user_id: number;
+        userId: number;
     };
     query?: never;
-    url: "/api/users/{user_id}/email-change/";
+    url: "/api/users/{userId}/email-change/";
 };
 
 export type UsersEmailChangeCreateErrors = {
@@ -543,10 +1011,10 @@ export type UsersEmailChangeCreateResponse = UsersEmailChangeCreateResponses[key
 export type UsersEmailChangeVerifyCreateData = {
     body: EmailChangeVerify;
     path: {
-        user_id: number;
+        userId: number;
     };
     query?: never;
-    url: "/api/users/{user_id}/email-change/verify/";
+    url: "/api/users/{userId}/email-change/verify/";
 };
 
 export type UsersEmailChangeVerifyCreateErrors = {
@@ -566,10 +1034,10 @@ export type UsersEmailChangeVerifyCreateResponse =
 export type UsersPasswordResetCreateData = {
     body?: never;
     path: {
-        user_id: number;
+        userId: number;
     };
     query?: never;
-    url: "/api/users/{user_id}/password-reset/";
+    url: "/api/users/{userId}/password-reset/";
 };
 
 export type UsersPasswordResetCreateErrors = {
@@ -592,10 +1060,10 @@ export type UsersPasswordResetCreateResponse =
 export type UsersPasswordResetVerifyCreateData = {
     body: PasswordResetVerifyWritable;
     path: {
-        user_id: number;
+        userId: number;
     };
     query?: never;
-    url: "/api/users/{user_id}/password-reset/verify/";
+    url: "/api/users/{userId}/password-reset/verify/";
 };
 
 export type UsersPasswordResetVerifyCreateErrors = {
@@ -673,6 +1141,32 @@ export type UsersAuthVerifyOtpCreateResponses = {
     200: unknown;
 };
 
+export type UsersCaregiversListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/users/caregivers/";
+};
+
+export type UsersCaregiversListResponses = {
+    200: Array<UserShort>;
+};
+
+export type UsersCaregiversListResponse = UsersCaregiversListResponses[keyof UsersCaregiversListResponses];
+
+export type UsersDoctorsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/users/doctors/";
+};
+
+export type UsersDoctorsListResponses = {
+    200: Array<UserShort>;
+};
+
+export type UsersDoctorsListResponse = UsersDoctorsListResponses[keyof UsersDoctorsListResponses];
+
 export type UsersPatientsListData = {
     body?: never;
     path?: never;
@@ -681,6 +1175,18 @@ export type UsersPatientsListData = {
          * Только прикреплённые к текущему доктору пациенты. Для опекунов игнорируется.
          */
         attached?: boolean;
+        /**
+         * Фильтр по опекунам (повторяемый параметр): пациенты хотя бы одного из указанных опекунов.
+         */
+        caregivers?: Array<number>;
+        /**
+         * Фильтр по диагнозам (повторяемый параметр): пациенты хотя бы с одним из указанных диагнозов.
+         */
+        diagnoses?: Array<number>;
+        /**
+         * Фильтр по докторам (повторяемый параметр): пациенты хотя бы одного из указанных докторов.
+         */
+        doctors?: Array<number>;
         /**
          * Фильтр по наличию опекуна: all — все, yes — есть опекун, no — нет опекуна.
          */
@@ -713,3 +1219,30 @@ export type UsersPatientsListResponses = {
 };
 
 export type UsersPatientsListResponse = UsersPatientsListResponses[keyof UsersPatientsListResponses];
+
+export type UsersPatientsPartialUpdateData = {
+    body?: PatchedEditPatient;
+    path: {
+        patientId: number;
+    };
+    query?: never;
+    url: "/api/users/patients/{patientId}/";
+};
+
+export type UsersPatientsPartialUpdateErrors = {
+    /**
+     * Доступ запрещён — только для прикреплённых докторов
+     */
+    403: unknown;
+    /**
+     * Пациент не найден
+     */
+    404: unknown;
+};
+
+export type UsersPatientsPartialUpdateResponses = {
+    200: PatientListItem;
+};
+
+export type UsersPatientsPartialUpdateResponse =
+    UsersPatientsPartialUpdateResponses[keyof UsersPatientsPartialUpdateResponses];

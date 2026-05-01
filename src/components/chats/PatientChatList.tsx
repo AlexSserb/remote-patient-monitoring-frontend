@@ -102,11 +102,11 @@ export function PatientChatList({ onSelectChat }: PatientChatListProps) {
                                         {roleLabel}
                                     </Text>
                                 )}
-                                {chat.last_message_at && (
+                                {chat.lastMessageAt && (
                                     <Text
                                         size="xs"
                                         c="dimmed">
-                                        {formatDate(chat.last_message_at)}
+                                        {formatDate(chat.lastMessageAt)}
                                     </Text>
                                 )}
                             </div>

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { decodeJwtPayload, isTokenExpired } from "@/lib/jwt";
 import { usersRetrieve } from "@/client/sdk.gen";
 import { PatientsTable } from "./components/PatientsTable";
+import { PatientDashboard } from "./components/PatientDashboard";
 
 export const metadata: Metadata = {
     title: "Главная",
@@ -25,7 +26,7 @@ export default async function HomePage() {
     }
 
     const { data: profile, error } = await usersRetrieve({
-        path: { user_id: userId },
+        path: { userId },
         headers: { Authorization: `Bearer ${accessToken}` },
     });
 
@@ -35,6 +36,5 @@ export default async function HomePage() {
         return <PatientsTable role={profile.role} />;
     }
 
-    // Пациенты: страница будет заполнена позже
-    return null;
+    return <PatientDashboard />;
 }
