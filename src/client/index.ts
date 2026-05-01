@@ -85,6 +85,8 @@ export type {
     DiagnosesListResponses,
     DiagnosisShort,
     DiagnosisShortWritable,
+    DiaryEntryAuthorInfo,
+    DiaryEntryAuthorInfoWritable,
     DiaryEntryCreate,
     DiaryEntryInfo,
     DiaryEntryInfoWritable,

@@ -68,6 +68,25 @@ export type DiagnosisShort = {
 };
 
 /**
+ * Автор записи дневника — пациент или опекун, создавший запись.
+ */
+export type DiaryEntryAuthorInfo = {
+    readonly id: number;
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
+    /**
+     * Роль
+     */
+    role: RoleEnum;
+};
+
+/**
  * Тело запроса для создания или обновления записи дневника.
  */
 export type DiaryEntryCreate = {
@@ -83,6 +102,7 @@ export type DiaryEntryInfo = {
      * Дата записи
      */
     readonly createdAt: string;
+    author: DiaryEntryAuthorInfo;
     readonly values: Array<DiaryEntryValueInfo>;
 };
 
@@ -412,6 +432,24 @@ export type DiagnosisShortWritable = {
      * Код (МКБ)
      */
     code: string;
+};
+
+/**
+ * Автор записи дневника — пациент или опекун, создавший запись.
+ */
+export type DiaryEntryAuthorInfoWritable = {
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
+    /**
+     * Роль
+     */
+    role: RoleEnum;
 };
 
 /**

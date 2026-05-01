@@ -146,6 +146,18 @@ export function DiaryEntriesList({
                                             </Text>
                                         ))}
                                     </Stack>
+
+                                    {entry.author && (
+                                        <Group
+                                            justify="flex-end"
+                                            mt={4}>
+                                            <Text
+                                                size="xs"
+                                                c="dimmed">
+                                                {entry.author.firstName} {entry.author.lastName}
+                                            </Text>
+                                        </Group>
+                                    )}
                                 </Box>
                             );
                         })}
