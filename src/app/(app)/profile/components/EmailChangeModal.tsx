@@ -1,9 +1,9 @@
 "use client";
 
-import {useState} from "react";
-import {Button, Group, Modal, PinInput, Stack, Text, TextInput} from "@mantine/core";
-import {useForm} from "@mantine/form";
-import {useEmailChange} from "../hooks/useEmailChange";
+import { useState } from "react";
+import { Button, Group, Modal, PinInput, Stack, Text, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useEmailChange } from "../hooks/useEmailChange";
 
 interface EmailChangeModalProps {
     opened: boolean;
@@ -11,13 +11,13 @@ interface EmailChangeModalProps {
     onSuccess: () => void;
 }
 
-export function EmailChangeModal({opened, onClose, onSuccess}: EmailChangeModalProps) {
+export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModalProps) {
     const [step, setStep] = useState<"email" | "otp">("email");
     const [pendingEmail, setPendingEmail] = useState("");
-    const {requestChange, verifyChange, isLoading, error, resetError} = useEmailChange();
+    const { requestChange, verifyChange, isLoading, error, resetError } = useEmailChange();
 
     const emailForm = useForm({
-        initialValues: {newEmail: ""},
+        initialValues: { newEmail: "" },
         validate: {
             newEmail: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
         },

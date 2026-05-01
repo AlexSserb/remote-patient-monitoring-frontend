@@ -6,8 +6,8 @@ import type { ChatItem } from "@/client/types.gen";
 import type { SelectedChat } from "./ChatPanel";
 
 interface Interlocutor {
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     role?: string;
 }
 
@@ -78,7 +78,7 @@ export function PatientChatList({ onSelectChat }: PatientChatListProps) {
             <Divider />
             {chats.map(chat => {
                 const person = chat.interlocutor as unknown as Interlocutor;
-                const name = `${person.first_name} ${person.last_name}`;
+                const name = `${person.firstName} ${person.lastName}`;
                 const roleLabel = ROLE_LABELS[person.role ?? ""] ?? person.role ?? "";
                 return (
                     <UnstyledButton
@@ -91,7 +91,7 @@ export function PatientChatList({ onSelectChat }: PatientChatListProps) {
                             <Avatar
                                 radius="xl"
                                 color="blue">
-                                {getInitials(person.first_name, person.last_name)}
+                                {getInitials(person.firstName, person.lastName)}
                             </Avatar>
                             <div>
                                 <Text fw={500}>{name}</Text>

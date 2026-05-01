@@ -5,6 +5,42 @@ export type ClientOptions = {
 };
 
 /**
+ * Одна точка данных на графике аналитики — значение метрики в момент записи.
+ */
+export type AnalyticsDataPoint = {
+    date: string;
+    metricId: number;
+    value: number;
+};
+
+/**
+ * Метрика, доступная для отображения на графике аналитики.
+ */
+export type AnalyticsMetric = {
+    readonly id: number;
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код
+     */
+    code: string;
+    /**
+     * Единица измерения
+     */
+    unit?: string;
+};
+
+/**
+ * Ответ эндпоинта аналитики: доступные метрики и точки данных за выбранный период.
+ */
+export type AnalyticsResponse = {
+    availableMetrics: Array<AnalyticsMetric>;
+    dataPoints: Array<AnalyticsDataPoint>;
+};
+
+/**
  * Группа чатов опекуна — один пациент, его доктора и другие опекуны.
  */
 export type CaregiverChatGroup = {
@@ -411,6 +447,32 @@ export type VerifyOtp = {
 };
 
 /**
+ * Метрика, доступная для отображения на графике аналитики.
+ */
+export type AnalyticsMetricWritable = {
+    /**
+     * Название
+     */
+    name: string;
+    /**
+     * Код
+     */
+    code: string;
+    /**
+     * Единица измерения
+     */
+    unit?: string;
+};
+
+/**
+ * Ответ эндпоинта аналитики: доступные метрики и точки данных за выбранный период.
+ */
+export type AnalyticsResponseWritable = {
+    availableMetrics: Array<AnalyticsMetricWritable>;
+    dataPoints: Array<AnalyticsDataPoint>;
+};
+
+/**
  * Чат со сведениями о собеседнике — для плоского списка пациента.
  */
 export type ChatItemWritable = {
@@ -765,6 +827,52 @@ export type DiagnosesListResponses = {
 };
 
 export type DiagnosesListResponse = DiagnosesListResponses[keyof DiagnosesListResponses];
+
+export type DiagnosesAnalyticsRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Начало диапазона дат (YYYY-MM-DD). По умолчанию — 7 дней назад
+         */
+        date_from?: string;
+        /**
+         * Конец диапазона дат (YYYY-MM-DD). По умолчанию — сегодня
+         */
+        date_to?: string;
+        /**
+         * Через запятую ID метрик для отображения на графике
+         */
+        metric_ids?: string;
+        /**
+         * ID пациента — обязателен для доктора и опекуна, игнорируется для пациента
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/analytics/";
+};
+
+export type DiagnosesAnalyticsRetrieveErrors = {
+    /**
+     * Неверный формат параметров
+     */
+    400: unknown;
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+    /**
+     * Пациент не найден
+     */
+    404: unknown;
+};
+
+export type DiagnosesAnalyticsRetrieveResponses = {
+    200: AnalyticsResponse;
+};
+
+export type DiagnosesAnalyticsRetrieveResponse =
+    DiagnosesAnalyticsRetrieveResponses[keyof DiagnosesAnalyticsRetrieveResponses];
 
 export type DiagnosesDiaryEntriesListData = {
     body?: never;
