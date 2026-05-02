@@ -8,6 +8,7 @@ import { useAnalytics } from "../hooks/useAnalytics";
 import { MetricsSelector } from "./MetricsSelector";
 import { DateRangeFilter } from "./DateRangeFilter";
 import { MetricsChart } from "./MetricsChart";
+import classes from "../styles/AnalyticsContent.module.css";
 
 function toIsoDate(d: Date): string {
     return d.toISOString().slice(0, 10);
@@ -38,7 +39,7 @@ export function AnalyticsContent({ patientId }: AnalyticsContentProps) {
 
     return (
         <Stack
-            px="xl"
+            px={{ base: "xs", sm: "xl" }}
             pt="md"
             pb="xl"
             gap="md">
@@ -82,7 +83,7 @@ export function AnalyticsContent({ patientId }: AnalyticsContentProps) {
                 <Paper
                     withBorder
                     p="md"
-                    style={{ gridColumn: "span 2" }}>
+                    className={classes.chartSpan}>
                     {isLoading ? (
                         <Group
                             justify="center"
