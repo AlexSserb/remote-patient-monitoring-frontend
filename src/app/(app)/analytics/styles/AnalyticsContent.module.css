@@ -1,0 +1,5 @@
+.chartSpan {
+    @media (min-width: 48em) {
+        grid-column: span 2;
+    }
+}

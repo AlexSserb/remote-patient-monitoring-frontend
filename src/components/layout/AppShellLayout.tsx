@@ -30,6 +30,7 @@ export function AppShellLayout({ children, role }: AppShellLayoutProps) {
                         opened={navOpened}
                         onToggle={toggleNav}
                         onChatOpen={openChat}
+                        role={role}
                     />
                 </AppShell.Header>
 

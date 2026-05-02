@@ -21,6 +21,9 @@ import type {
     ChatsMessagesRetrieveData,
     ChatsMessagesRetrieveErrors,
     ChatsMessagesRetrieveResponses,
+    DiagnosesAnalyticsRetrieveData,
+    DiagnosesAnalyticsRetrieveErrors,
+    DiagnosesAnalyticsRetrieveResponses,
     DiagnosesDiaryEntriesCreateData,
     DiagnosesDiaryEntriesCreateErrors,
     DiagnosesDiaryEntriesCreateResponses,
@@ -202,6 +205,25 @@ export const diagnosesList = <ThrowOnError extends boolean = false>(
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/diagnoses/",
+        ...options,
+    });
+
+/**
+ * Аналитика дневниковых метрик пациента
+ *
+ * Возвращает числовые метрики пациента и точки данных за выбранный период.
+ */
+export const diagnosesAnalyticsRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesAnalyticsRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<
+        DiagnosesAnalyticsRetrieveResponses,
+        DiagnosesAnalyticsRetrieveErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/analytics/",
         ...options,
     });
 

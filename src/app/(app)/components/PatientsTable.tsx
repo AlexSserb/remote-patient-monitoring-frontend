@@ -24,6 +24,7 @@ import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPa
 import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
 import { NameListCell } from "./NameListCell";
 import { EditPatientModal } from "./EditPatientModal";
+import { AnalyticsButton } from "./AnalyticsButton";
 import { DiaryButton } from "./DiaryButton";
 import { EditPatientButton } from "./EditPatientButton";
 
@@ -192,12 +193,16 @@ export function PatientsTable({ role }: PatientsTableProps) {
                                 onClick={handleOpenEdit}
                             />
                             <DiaryButton patientId={patient.id} />
+                            <AnalyticsButton patientId={patient.id} />
                         </Group>
                     </Table.Td>
                 )}
                 {role === "caregiver" && (
                     <Table.Td>
-                        <DiaryButton patientId={patient.id} />
+                        <Group gap="xs">
+                            <DiaryButton patientId={patient.id} />
+                            <AnalyticsButton patientId={patient.id} />
+                        </Group>
                     </Table.Td>
                 )}
             </Table.Tr>
