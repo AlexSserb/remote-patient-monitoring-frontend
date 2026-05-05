@@ -284,6 +284,35 @@ export type MessageSender = {
 };
 
 /**
+ * Расписание уведомлений с вложенными данными получателя для чтения.
+ */
+export type NotificationSchedule = {
+    readonly id: number;
+    recipient: RecipientBrief;
+    readonly daysOfWeek: Array<number>;
+    readonly times: Array<string>;
+    /**
+     * Включено
+     */
+    isEnabled?: boolean;
+    /**
+     * Обновлено
+     */
+    readonly updatedAt: string;
+};
+
+/**
+ * Сериализатор создания расписания уведомлений: проверяет пациента и параметры расписания.
+ */
+export type NotificationScheduleCreate = {
+    patientId: number;
+    recipientId?: number;
+    daysOfWeek: Array<number>;
+    times: Array<string>;
+    isEnabled?: boolean;
+};
+
+/**
  * Сериализатор подтверждения смены пароля: проверяет OTP и устанавливает новый пароль.
  */
 export type PasswordResetVerify = {
@@ -303,6 +332,15 @@ export type PatchedDiaryEntryCreate = {
 export type PatchedEditPatient = {
     diagnoses?: Array<number>;
     doctors?: Array<number>;
+};
+
+/**
+ * Сериализатор обновления расписания: дни недели, время и признак активности.
+ */
+export type PatchedNotificationScheduleUpdate = {
+    daysOfWeek?: Array<number>;
+    times?: Array<string>;
+    isEnabled?: boolean;
 };
 
 /**
@@ -375,6 +413,25 @@ export type PatientListItem = {
 export type PatientListResponse = {
     count: number;
     results: Array<PatientListItem>;
+};
+
+/**
+ * Краткое представление получателя уведомления для вложенных ответов.
+ */
+export type RecipientBrief = {
+    readonly id: number;
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
+    /**
+     * Роль
+     */
+    role: RoleEnum;
 };
 
 /**
@@ -591,6 +648,16 @@ export type MessagePageWritable = {
 };
 
 /**
+ * Расписание уведомлений с вложенными данными получателя для чтения.
+ */
+export type NotificationScheduleWritable = {
+    /**
+     * Включено
+     */
+    isEnabled?: boolean;
+};
+
+/**
  * Сериализатор подтверждения смены пароля: проверяет OTP и устанавливает новый пароль.
  */
 export type PasswordResetVerifyWritable = {
@@ -620,6 +687,24 @@ export type PatientListItemWritable = {
 export type PatientListResponseWritable = {
     count: number;
     results: Array<PatientListItemWritable>;
+};
+
+/**
+ * Краткое представление получателя уведомления для вложенных ответов.
+ */
+export type RecipientBriefWritable = {
+    /**
+     * Имя
+     */
+    firstName: string;
+    /**
+     * Фамилия
+     */
+    lastName: string;
+    /**
+     * Роль
+     */
+    role: RoleEnum;
 };
 
 /**
@@ -1038,6 +1123,97 @@ export type DiagnosesDiaryFieldsListResponses = {
 
 export type DiagnosesDiaryFieldsListResponse =
     DiagnosesDiaryFieldsListResponses[keyof DiagnosesDiaryFieldsListResponses];
+
+export type NotificationsSchedulesListData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * ID пациента, чьи расписания запрашиваются
+         */
+        patient_id: number;
+    };
+    url: "/api/notifications/schedules/";
+};
+
+export type NotificationsSchedulesListErrors = {
+    /**
+     * Не передан patient_id
+     */
+    400: unknown;
+    /**
+     * Нет доступа к расписаниям пациента
+     */
+    403: unknown;
+    /**
+     * Пациент не найден
+     */
+    404: unknown;
+};
+
+export type NotificationsSchedulesListResponses = {
+    200: Array<NotificationSchedule>;
+};
+
+export type NotificationsSchedulesListResponse =
+    NotificationsSchedulesListResponses[keyof NotificationsSchedulesListResponses];
+
+export type NotificationsSchedulesCreateData = {
+    body: NotificationScheduleCreate;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/schedules/";
+};
+
+export type NotificationsSchedulesCreateErrors = {
+    /**
+     * Ошибка валидации
+     */
+    400: unknown;
+    /**
+     * Нет доступа к пациенту
+     */
+    403: unknown;
+};
+
+export type NotificationsSchedulesCreateResponses = {
+    200: NotificationSchedule;
+    201: NotificationSchedule;
+};
+
+export type NotificationsSchedulesCreateResponse =
+    NotificationsSchedulesCreateResponses[keyof NotificationsSchedulesCreateResponses];
+
+export type NotificationsSchedulesPartialUpdateData = {
+    body?: PatchedNotificationScheduleUpdate;
+    path: {
+        scheduleId: number;
+    };
+    query?: never;
+    url: "/api/notifications/schedules/{scheduleId}/";
+};
+
+export type NotificationsSchedulesPartialUpdateErrors = {
+    /**
+     * Ошибка валидации
+     */
+    400: unknown;
+    /**
+     * Нет прав на изменение расписания
+     */
+    403: unknown;
+    /**
+     * Расписание не найдено
+     */
+    404: unknown;
+};
+
+export type NotificationsSchedulesPartialUpdateResponses = {
+    200: NotificationSchedule;
+};
+
+export type NotificationsSchedulesPartialUpdateResponse =
+    NotificationsSchedulesPartialUpdateResponses[keyof NotificationsSchedulesPartialUpdateResponses];
 
 export type UsersRetrieveData = {
     body?: never;

@@ -42,6 +42,15 @@ import type {
     DiagnosesListData,
     DiagnosesListErrors,
     DiagnosesListResponses,
+    NotificationsSchedulesCreateData,
+    NotificationsSchedulesCreateErrors,
+    NotificationsSchedulesCreateResponses,
+    NotificationsSchedulesListData,
+    NotificationsSchedulesListErrors,
+    NotificationsSchedulesListResponses,
+    NotificationsSchedulesPartialUpdateData,
+    NotificationsSchedulesPartialUpdateErrors,
+    NotificationsSchedulesPartialUpdateResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -319,6 +328,69 @@ export const diagnosesDiaryFieldsList = <ThrowOnError extends boolean = false>(
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/diagnoses/diary-fields/",
         ...options,
+    });
+
+/**
+ * Список расписаний уведомлений для пациента
+ *
+ * Возвращает расписания для пациента или создаёт расписание для текущего пользователя.
+ */
+export const notificationsSchedulesList = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsSchedulesListData, ThrowOnError>
+) =>
+    (options.client ?? client).get<NotificationsSchedulesListResponses, NotificationsSchedulesListErrors, ThrowOnError>(
+        {
+            responseType: "json",
+            security: [{ scheme: "bearer", type: "http" }],
+            url: "/api/notifications/schedules/",
+            ...options,
+        }
+    );
+
+/**
+ * Создать или обновить расписание уведомлений
+ *
+ * Возвращает расписания для пациента или создаёт расписание для текущего пользователя.
+ */
+export const notificationsSchedulesCreate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsSchedulesCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        NotificationsSchedulesCreateResponses,
+        NotificationsSchedulesCreateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/schedules/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Обновить параметры расписания уведомлений
+ *
+ * Обновляет дни, время и статус активности расписания уведомлений.
+ */
+export const notificationsSchedulesPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsSchedulesPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        NotificationsSchedulesPartialUpdateResponses,
+        NotificationsSchedulesPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/schedules/{scheduleId}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
     });
 
 /**

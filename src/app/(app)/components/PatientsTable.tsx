@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+    ActionIcon,
     Alert,
     Button,
     Center,
@@ -17,12 +18,15 @@ import {
     Text,
     TextInput,
     Title,
+    Tooltip,
 } from "@mantine/core";
+import { IconBell } from "@tabler/icons-react";
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import type { PatientListItem, RoleEnum } from "@/client/types.gen";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
 import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
 import { NameListCell } from "./NameListCell";
+import { NotificationSettingsModal } from "@/components/notifications/NotificationSettingsModal";
 import { EditPatientModal } from "./EditPatientModal";
 import { AnalyticsButton } from "./AnalyticsButton";
 import { DiaryButton } from "./DiaryButton";
@@ -64,11 +68,18 @@ export function PatientsTable({ role }: PatientsTableProps) {
 
     const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
     const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+    const [notifPatient, setNotifPatient] = useState<PatientListItem | null>(null);
+    const [notifOpened, { open: openNotif, close: closeNotif }] = useDisclosure(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
     function handleOpenEdit(patient: PatientListItem) {
         setEditingPatient(patient);
         openEdit();
+    }
+
+    function handleOpenNotif(patient: PatientListItem) {
+        setNotifPatient(patient);
+        openNotif();
     }
 
     function handleEditSuccess() {
@@ -194,6 +205,15 @@ export function PatientsTable({ role }: PatientsTableProps) {
                             />
                             <DiaryButton patientId={patient.id} />
                             <AnalyticsButton patientId={patient.id} />
+                            <Tooltip label="Настройки уведомлений">
+                                <ActionIcon
+                                    variant="light"
+                                    color="orange"
+                                    onClick={() => handleOpenNotif(patient)}
+                                    aria-label="Настройки уведомлений">
+                                    <IconBell size={16} />
+                                </ActionIcon>
+                            </Tooltip>
                         </Group>
                     </Table.Td>
                 )}
@@ -202,6 +222,15 @@ export function PatientsTable({ role }: PatientsTableProps) {
                         <Group gap="xs">
                             <DiaryButton patientId={patient.id} />
                             <AnalyticsButton patientId={patient.id} />
+                            <Tooltip label="Настройки уведомлений">
+                                <ActionIcon
+                                    variant="light"
+                                    color="orange"
+                                    onClick={() => handleOpenNotif(patient)}
+                                    aria-label="Настройки уведомлений">
+                                    <IconBell size={16} />
+                                </ActionIcon>
+                            </Tooltip>
                         </Group>
                     </Table.Td>
                 )}
@@ -216,6 +245,14 @@ export function PatientsTable({ role }: PatientsTableProps) {
                 patient={editingPatient}
                 onClose={closeEdit}
                 onSuccess={handleEditSuccess}
+            />
+
+            <NotificationSettingsModal
+                opened={notifOpened}
+                onClose={closeNotif}
+                patientId={notifPatient?.id ?? null}
+                patientName={notifPatient ? `${notifPatient.firstName} ${notifPatient.lastName}` : undefined}
+                viewerRole={role}
             />
 
             {/* Модалка фильтров */}

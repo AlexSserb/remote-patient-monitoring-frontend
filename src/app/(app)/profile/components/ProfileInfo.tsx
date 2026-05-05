@@ -6,6 +6,7 @@ import { Avatar, Badge, Button, Card, Container, Divider, Group, Stack, Text, Ti
 import { useDisclosure } from "@mantine/hooks";
 import type { RoleEnum, UserProfile } from "@/client/types.gen";
 import { useAuth } from "@/contexts/AuthContext";
+import { NotificationSettingsModal } from "@/components/notifications/NotificationSettingsModal";
 import { EditNameModal } from "./EditNameModal";
 import { EmailChangeModal } from "./EmailChangeModal";
 import { PasswordResetModal } from "./PasswordResetModal";
@@ -27,6 +28,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
     const [editNameOpened, { open: openEditName, close: closeEditName }] = useDisclosure(false);
     const [emailChangeOpened, { open: openEmailChange, close: closeEmailChange }] = useDisclosure(false);
     const [passwordResetOpened, { open: openPasswordReset, close: closePasswordReset }] = useDisclosure(false);
+    const [notifOpened, { open: openNotif, close: closeNotif }] = useDisclosure(false);
 
     function handleLogout() {
         setIsLoggingOut(true);
@@ -124,6 +126,15 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                             onClick={openPasswordReset}>
                             Сменить пароль
                         </Button>
+                        {profile.role === "patient" && (
+                            <Button
+                                variant="light"
+                                color="teal"
+                                fullWidth
+                                onClick={openNotif}>
+                                Уведомления
+                            </Button>
+                        )}
                         <Button
                             variant="outline"
                             color="red"
@@ -153,6 +164,14 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
             <PasswordResetModal
                 opened={passwordResetOpened}
                 onClose={closePasswordReset}
+            />
+
+            <NotificationSettingsModal
+                opened={notifOpened}
+                onClose={closeNotif}
+                patientId={profile.role === "patient" ? profile.id : null}
+                patientName={profile.role === "patient" ? fullName : undefined}
+                viewerRole={profile.role}
             />
         </>
     );
