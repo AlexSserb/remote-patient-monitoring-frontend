@@ -43,6 +43,13 @@ export function ScheduleCard({
     const [times, setTimes] = useState<string[]>(schedule?.times ?? []);
     const [isEnabled, setIsEnabled] = useState(schedule?.isEnabled ?? true);
 
+    // Синхронизируем локальное состояние при обновлении данных с сервера после сохранения
+    useEffect(() => {
+        setDaysOfWeek((schedule?.daysOfWeek ?? []).map(String));
+        setTimes(schedule?.times ?? []);
+        setIsEnabled(schedule?.isEnabled ?? true);
+    }, [schedule?.id, schedule?.updatedAt]);
+
     const initialDaysOfWeek = (schedule?.daysOfWeek ?? []).map(String);
     const initialTimes = schedule?.times ?? [];
     const initialIsEnabled = schedule?.isEnabled ?? true;

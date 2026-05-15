@@ -42,6 +42,17 @@ import type {
     DiagnosesListData,
     DiagnosesListErrors,
     DiagnosesListResponses,
+    NotificationsEmailSubscriptionCreateData,
+    NotificationsEmailSubscriptionCreateResponses,
+    NotificationsEmailSubscriptionDestroyData,
+    NotificationsEmailSubscriptionDestroyResponses,
+    NotificationsEmailSubscriptionRetrieveData,
+    NotificationsEmailSubscriptionRetrieveResponses,
+    NotificationsPushSubscriptionCreateData,
+    NotificationsPushSubscriptionCreateErrors,
+    NotificationsPushSubscriptionCreateResponses,
+    NotificationsPushSubscriptionDestroyData,
+    NotificationsPushSubscriptionDestroyResponses,
     NotificationsSchedulesCreateData,
     NotificationsSchedulesCreateErrors,
     NotificationsSchedulesCreateResponses,
@@ -51,6 +62,8 @@ import type {
     NotificationsSchedulesPartialUpdateData,
     NotificationsSchedulesPartialUpdateErrors,
     NotificationsSchedulesPartialUpdateResponses,
+    NotificationsVapidPublicKeyRetrieveData,
+    NotificationsVapidPublicKeyRetrieveResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -331,6 +344,84 @@ export const diagnosesDiaryFieldsList = <ThrowOnError extends boolean = false>(
     });
 
 /**
+ * Отключить email-уведомления
+ *
+ * Возвращает статус или меняет активность email-уведомлений для текущего пользователя.
+ */
+export const notificationsEmailSubscriptionDestroy = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsEmailSubscriptionDestroyData, ThrowOnError>
+) =>
+    (options?.client ?? client).delete<NotificationsEmailSubscriptionDestroyResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Статус email-уведомлений текущего пользователя
+ *
+ * Возвращает статус или меняет активность email-уведомлений для текущего пользователя.
+ */
+export const notificationsEmailSubscriptionRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsEmailSubscriptionRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsEmailSubscriptionRetrieveResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Включить email-уведомления
+ *
+ * Возвращает статус или меняет активность email-уведомлений для текущего пользователя.
+ */
+export const notificationsEmailSubscriptionCreate = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsEmailSubscriptionCreateData, ThrowOnError>
+) =>
+    (options?.client ?? client).post<NotificationsEmailSubscriptionCreateResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Отключить web push подписку
+ *
+ * Сохраняет push-подписку браузера или деактивирует её для текущего пользователя.
+ */
+export const notificationsPushSubscriptionDestroy = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsPushSubscriptionDestroyData, ThrowOnError>
+) =>
+    (options?.client ?? client).delete<NotificationsPushSubscriptionDestroyResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/push-subscription/",
+        ...options,
+    });
+
+/**
+ * Сохранить web push подписку
+ *
+ * Сохраняет push-подписку браузера или деактивирует её для текущего пользователя.
+ */
+export const notificationsPushSubscriptionCreate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsPushSubscriptionCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        NotificationsPushSubscriptionCreateResponses,
+        NotificationsPushSubscriptionCreateErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/push-subscription/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
  * Список расписаний уведомлений для пациента
  *
  * Возвращает расписания для пациента или создаёт расписание для текущего пользователя.
@@ -391,6 +482,19 @@ export const notificationsSchedulesPartialUpdate = <ThrowOnError extends boolean
             "Content-Type": "application/json",
             ...options.headers,
         },
+    });
+
+/**
+ * Публичный VAPID-ключ для web push
+ *
+ * Возвращает публичный VAPID-ключ для создания push-подписки в браузере.
+ */
+export const notificationsVapidPublicKeyRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsVapidPublicKeyRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsVapidPublicKeyRetrieveResponses, unknown, ThrowOnError>({
+        url: "/api/notifications/vapid-public-key/",
+        ...options,
     });
 
 /**

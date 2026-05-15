@@ -416,6 +416,22 @@ export type PatientListResponse = {
 };
 
 /**
+ * Push-подписка браузера для хранения в NotificationChannelConfig.
+ */
+export type PushSubscription = {
+    endpoint: string;
+    keys: PushSubscriptionKeys;
+};
+
+/**
+ * Криптографические ключи push-подписки браузера (P-256 DH и auth-секрет).
+ */
+export type PushSubscriptionKeys = {
+    p256dh: string;
+    auth: string;
+};
+
+/**
  * Краткое представление получателя уведомления для вложенных ответов.
  */
 export type RecipientBrief = {
@@ -1124,6 +1140,95 @@ export type DiagnosesDiaryFieldsListResponses = {
 export type DiagnosesDiaryFieldsListResponse =
     DiagnosesDiaryFieldsListResponses[keyof DiagnosesDiaryFieldsListResponses];
 
+export type NotificationsEmailSubscriptionDestroyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/email-subscription/";
+};
+
+export type NotificationsEmailSubscriptionDestroyResponses = {
+    /**
+     * Email-уведомления отключены
+     */
+    204: void;
+};
+
+export type NotificationsEmailSubscriptionDestroyResponse =
+    NotificationsEmailSubscriptionDestroyResponses[keyof NotificationsEmailSubscriptionDestroyResponses];
+
+export type NotificationsEmailSubscriptionRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/email-subscription/";
+};
+
+export type NotificationsEmailSubscriptionRetrieveResponses = {
+    /**
+     * {"is_active": bool}
+     */
+    200: unknown;
+};
+
+export type NotificationsEmailSubscriptionCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/email-subscription/";
+};
+
+export type NotificationsEmailSubscriptionCreateResponses = {
+    /**
+     * Email-уведомления включены
+     */
+    204: void;
+};
+
+export type NotificationsEmailSubscriptionCreateResponse =
+    NotificationsEmailSubscriptionCreateResponses[keyof NotificationsEmailSubscriptionCreateResponses];
+
+export type NotificationsPushSubscriptionDestroyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/push-subscription/";
+};
+
+export type NotificationsPushSubscriptionDestroyResponses = {
+    /**
+     * Подписка отключена
+     */
+    204: void;
+};
+
+export type NotificationsPushSubscriptionDestroyResponse =
+    NotificationsPushSubscriptionDestroyResponses[keyof NotificationsPushSubscriptionDestroyResponses];
+
+export type NotificationsPushSubscriptionCreateData = {
+    body: PushSubscription;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/push-subscription/";
+};
+
+export type NotificationsPushSubscriptionCreateErrors = {
+    /**
+     * Ошибка валидации
+     */
+    400: unknown;
+};
+
+export type NotificationsPushSubscriptionCreateResponses = {
+    /**
+     * Подписка сохранена
+     */
+    204: void;
+};
+
+export type NotificationsPushSubscriptionCreateResponse =
+    NotificationsPushSubscriptionCreateResponses[keyof NotificationsPushSubscriptionCreateResponses];
+
 export type NotificationsSchedulesListData = {
     body?: never;
     path?: never;
@@ -1214,6 +1319,20 @@ export type NotificationsSchedulesPartialUpdateResponses = {
 
 export type NotificationsSchedulesPartialUpdateResponse =
     NotificationsSchedulesPartialUpdateResponses[keyof NotificationsSchedulesPartialUpdateResponses];
+
+export type NotificationsVapidPublicKeyRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/vapid-public-key/";
+};
+
+export type NotificationsVapidPublicKeyRetrieveResponses = {
+    /**
+     * Публичный VAPID-ключ для подписки
+     */
+    200: unknown;
+};
 
 export type UsersRetrieveData = {
     body?: never;

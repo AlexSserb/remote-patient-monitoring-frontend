@@ -208,7 +208,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
                             <Tooltip label="Настройки уведомлений">
                                 <ActionIcon
                                     variant="light"
-                                    color="orange"
+                                    color="grape"
                                     onClick={() => handleOpenNotif(patient)}
                                     aria-label="Настройки уведомлений">
                                     <IconBell size={16} />
@@ -225,7 +225,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
                             <Tooltip label="Настройки уведомлений">
                                 <ActionIcon
                                     variant="light"
-                                    color="orange"
+                                    color="grape"
                                     onClick={() => handleOpenNotif(patient)}
                                     aria-label="Настройки уведомлений">
                                     <IconBell size={16} />
