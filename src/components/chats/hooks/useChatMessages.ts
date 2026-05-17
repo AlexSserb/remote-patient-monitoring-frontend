@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { Message, MessagePage } from "@/client/types.gen";
+import {useCallback, useEffect, useRef, useState} from "react";
+import type {Message, MessagePage} from "@/client/types.gen";
 
 interface WsIncomingMessage {
     type: "chat.message";
@@ -86,7 +86,7 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
             return;
         }
         setSendError(null);
-        wsRef.current.send(JSON.stringify({ content }));
+        wsRef.current.send(JSON.stringify({content}));
     }, []);
 
     const deleteMessage = useCallback((messageId: number) => {
@@ -94,7 +94,7 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
             setSendError("Соединение потеряно. Перезагрузите страницу.");
             return;
         }
-        wsRef.current.send(JSON.stringify({ type: "delete", message_id: messageId }));
+        wsRef.current.send(JSON.stringify({type: "delete", message_id: messageId}));
     }, []);
 
     const editMessage = useCallback((messageId: number, content: string) => {
@@ -102,7 +102,7 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
             setSendError("Соединение потеряно. Перезагрузите страницу.");
             return;
         }
-        wsRef.current.send(JSON.stringify({ type: "edit", message_id: messageId, content }));
+        wsRef.current.send(JSON.stringify({type: "edit", message_id: messageId, content}));
     }, []);
 
     useEffect(() => {
@@ -134,7 +134,7 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
 
         fetch("/api/auth/ws-token")
             .then(res => (res.ok ? (res.json() as Promise<{ token: string }>) : Promise.reject(res.status)))
-            .then(({ token }) => {
+            .then(({token}) => {
                 if (cancelled) return;
                 ws = new WebSocket(buildWsUrl(chatId, token));
                 wsRef.current = ws;
@@ -146,14 +146,12 @@ export function useChatMessages(chatId: number | null): UseChatMessagesReturn {
                             setMessages(prev => [...prev, data.message]);
                         } else if (data.type === "chat.message_deleted") {
                             setMessages(prev =>
-                                prev.map(m =>
-                                    m.id === data.message_id ? { ...m, is_deleted: true, content: null } : m
-                                )
+                                prev.map(m => (m.id === data.message_id ? {...m, isDeleted: true, content: null} : m))
                             );
                         } else if (data.type === "chat.message_edited") {
                             setMessages(prev =>
                                 prev.map(m =>
-                                    m.id === data.message_id ? { ...m, content: data.content, edited: true } : m
+                                    m.id === data.message_id ? {...m, content: data.content, edited: true} : m
                                 )
                             );
                         }
