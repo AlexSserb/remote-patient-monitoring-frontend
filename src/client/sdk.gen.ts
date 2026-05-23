@@ -48,6 +48,13 @@ import type {
     NotificationsEmailSubscriptionDestroyResponses,
     NotificationsEmailSubscriptionRetrieveData,
     NotificationsEmailSubscriptionRetrieveResponses,
+    NotificationsInAppReadAllCreateData,
+    NotificationsInAppReadAllCreateResponses,
+    NotificationsInAppReadPartialUpdateData,
+    NotificationsInAppReadPartialUpdateErrors,
+    NotificationsInAppReadPartialUpdateResponses,
+    NotificationsInAppRetrieveData,
+    NotificationsInAppRetrieveResponses,
     NotificationsPushSubscriptionCreateData,
     NotificationsPushSubscriptionCreateErrors,
     NotificationsPushSubscriptionCreateResponses,
@@ -346,7 +353,7 @@ export const diagnosesDiaryFieldsList = <ThrowOnError extends boolean = false>(
 /**
  * Отключить email-уведомления
  *
- * Возвращает статус или меняет активность email-уведомлений для текущего пользователя.
+ * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
  */
 export const notificationsEmailSubscriptionDestroy = <ThrowOnError extends boolean = false>(
     options?: Options<NotificationsEmailSubscriptionDestroyData, ThrowOnError>
@@ -360,7 +367,7 @@ export const notificationsEmailSubscriptionDestroy = <ThrowOnError extends boole
 /**
  * Статус email-уведомлений текущего пользователя
  *
- * Возвращает статус или меняет активность email-уведомлений для текущего пользователя.
+ * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
  */
 export const notificationsEmailSubscriptionRetrieve = <ThrowOnError extends boolean = false>(
     options?: Options<NotificationsEmailSubscriptionRetrieveData, ThrowOnError>
@@ -374,7 +381,7 @@ export const notificationsEmailSubscriptionRetrieve = <ThrowOnError extends bool
 /**
  * Включить email-уведомления
  *
- * Возвращает статус или меняет активность email-уведомлений для текущего пользователя.
+ * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
  */
 export const notificationsEmailSubscriptionCreate = <ThrowOnError extends boolean = false>(
     options?: Options<NotificationsEmailSubscriptionCreateData, ThrowOnError>
@@ -382,6 +389,52 @@ export const notificationsEmailSubscriptionCreate = <ThrowOnError extends boolea
     (options?.client ?? client).post<NotificationsEmailSubscriptionCreateResponses, unknown, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Список in-app уведомлений текущего пользователя
+ *
+ * Возвращает пагинированный список in-app уведомлений с количеством непрочитанных.
+ */
+export const notificationsInAppRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsInAppRetrieveResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app/",
+        ...options,
+    });
+
+/**
+ * Пометить in-app уведомление прочитанным
+ *
+ * Переводит одно in-app уведомление в статус «прочитано».
+ */
+export const notificationsInAppReadPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsInAppReadPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        NotificationsInAppReadPartialUpdateResponses,
+        NotificationsInAppReadPartialUpdateErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app/{notificationId}/read/",
+        ...options,
+    });
+
+/**
+ * Пометить все in-app уведомления прочитанными
+ *
+ * Переводит все непрочитанные in-app уведомления пользователя в статус «прочитано».
+ */
+export const notificationsInAppReadAllCreate = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppReadAllCreateData, ThrowOnError>
+) =>
+    (options?.client ?? client).post<NotificationsInAppReadAllCreateResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app/read-all/",
         ...options,
     });
 
@@ -609,7 +662,7 @@ export const usersPasswordResetVerifyCreate = <ThrowOnError extends boolean = fa
     });
 
 /**
- * Шаг 1 — вход по email и паролю
+ * Шаг 1. Вход по email и паролю
  *
  * Принимает email и пароль, отправляет OTP на почту, возвращает pre_auth_token.
  */
@@ -663,7 +716,7 @@ export const usersAuthTokenRefreshCreate = <ThrowOnError extends boolean = false
     });
 
 /**
- * Шаг 2 — подтверждение OTP
+ * Шаг 2. Подтверждение OTP
  *
  * Принимает pre_auth_token и OTP, возвращает JWT access и refresh токены.
  */
