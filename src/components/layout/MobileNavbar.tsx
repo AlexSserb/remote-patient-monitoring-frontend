@@ -2,18 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Box, NavLink, Stack } from "@mantine/core";
+import { Badge, Box, Group, NavLink, Stack } from "@mantine/core";
 import { useNavItems } from "@/hooks/useNavItems";
 import type { UserRole } from "@/lib/navigation";
-import { IconBrandLine, IconUserCircle } from "@tabler/icons-react";
+import { IconBell, IconBrandLine, IconUserCircle } from "@tabler/icons-react";
 
 interface MobileNavbarProps {
     role: UserRole | undefined;
     onClose: () => void;
     onChatOpen: () => void;
+    unreadNotificationsCount: number;
 }
 
-export function MobileNavbar({ role, onClose, onChatOpen }: MobileNavbarProps) {
+export function MobileNavbar({ role, onClose, onChatOpen, unreadNotificationsCount }: MobileNavbarProps) {
     const pathname = usePathname();
     const navItems = useNavItems(role);
 
@@ -40,6 +41,26 @@ export function MobileNavbar({ role, onClose, onChatOpen }: MobileNavbarProps) {
                     active={pathname === "/profile"}
                     onClick={onClose}
                     leftSection={<IconUserCircle />}
+                />
+                <NavLink
+                    component={Link}
+                    href="/notifications"
+                    label={
+                        <Group gap="xs">
+                            Уведомления
+                            {unreadNotificationsCount > 0 && (
+                                <Badge
+                                    size="xs"
+                                    color="red"
+                                    circle>
+                                    {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                                </Badge>
+                            )}
+                        </Group>
+                    }
+                    active={pathname === "/notifications"}
+                    onClick={onClose}
+                    leftSection={<IconBell size={20} />}
                 />
                 {navItems.map(item => (
                     <NavLink

@@ -862,7 +862,7 @@ export type ChatsMessagesEditPartialUpdateErrors = {
 };
 
 export type ChatsMessagesEditPartialUpdateResponses = {
-    200: MessagePage;
+    200: Message;
 };
 
 export type ChatsMessagesEditPartialUpdateResponse =
@@ -1187,6 +1187,72 @@ export type NotificationsEmailSubscriptionCreateResponses = {
 
 export type NotificationsEmailSubscriptionCreateResponse =
     NotificationsEmailSubscriptionCreateResponses[keyof NotificationsEmailSubscriptionCreateResponses];
+
+export type NotificationsInAppRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Размер страницы
+         */
+        limit?: number;
+        /**
+         * Смещение
+         */
+        offset?: number;
+    };
+    url: "/api/notifications/in-app/";
+};
+
+export type NotificationsInAppRetrieveResponses = {
+    /**
+     * {"results": [...], "count": int, "unreadCount": int, "hasMore": bool}
+     */
+    200: unknown;
+};
+
+export type NotificationsInAppReadPartialUpdateData = {
+    body?: never;
+    path: {
+        notificationId: number;
+    };
+    query?: never;
+    url: "/api/notifications/in-app/{notificationId}/read/";
+};
+
+export type NotificationsInAppReadPartialUpdateErrors = {
+    /**
+     * Уведомление не найдено
+     */
+    404: unknown;
+};
+
+export type NotificationsInAppReadPartialUpdateResponses = {
+    /**
+     * Уведомление помечено прочитанным
+     */
+    204: void;
+};
+
+export type NotificationsInAppReadPartialUpdateResponse =
+    NotificationsInAppReadPartialUpdateResponses[keyof NotificationsInAppReadPartialUpdateResponses];
+
+export type NotificationsInAppReadAllCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/in-app/read-all/";
+};
+
+export type NotificationsInAppReadAllCreateResponses = {
+    /**
+     * Все уведомления помечены прочитанными
+     */
+    204: void;
+};
+
+export type NotificationsInAppReadAllCreateResponse =
+    NotificationsInAppReadAllCreateResponses[keyof NotificationsInAppReadAllCreateResponses];
 
 export type NotificationsPushSubscriptionDestroyData = {
     body?: never;

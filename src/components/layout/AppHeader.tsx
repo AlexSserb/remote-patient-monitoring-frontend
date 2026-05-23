@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Anchor, Burger, Group, Text } from "@mantine/core";
 import { useNavItems } from "@/hooks/useNavItems";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import type { UseInAppNotificationsReturn } from "@/components/notifications/hooks/useInAppNotifications";
 import type { UserRole } from "@/lib/navigation";
 
 interface AppHeaderProps {
@@ -11,9 +13,10 @@ interface AppHeaderProps {
     onToggle: () => void;
     onChatOpen: () => void;
     role?: UserRole;
+    inAppNotifications: UseInAppNotificationsReturn;
 }
 
-export function AppHeader({ opened, onToggle, onChatOpen, role }: AppHeaderProps) {
+export function AppHeader({ opened, onToggle, onChatOpen, role, inAppNotifications }: AppHeaderProps) {
     const pathname = usePathname();
     const navItems = useNavItems(role);
 
@@ -59,6 +62,7 @@ export function AppHeader({ opened, onToggle, onChatOpen, role }: AppHeaderProps
                     fw={pathname === "/profile" ? 600 : 400}>
                     Профиль
                 </Anchor>
+                <NotificationBell notifications={inAppNotifications} />
             </Group>
         </Group>
     );
