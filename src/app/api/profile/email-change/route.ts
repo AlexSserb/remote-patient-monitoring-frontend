@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const body: EmailChangeRequest = await request.json();
 
     const { error } = await usersEmailChangeCreate({
-        path: { user_id: userId },
+        path: { userId },
         body,
         headers: { Authorization: `Bearer ${accessToken}` },
     });

@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { IconChartLine } from "@tabler/icons-react";
 
 // Compatible with @tabler/icons-react icon components
 export interface NavItem {
@@ -13,7 +14,7 @@ export type UserRole = "doctor" | "patient" | "caregiver";
 export const doctorNavItems: NavItem[] = [];
 
 // Navigation items shown to patients
-export const patientNavItems: NavItem[] = [];
+export const patientNavItems: NavItem[] = [{ label: "Аналитика", href: "/analytics", icon: IconChartLine }];
 
 // Navigation items shown to caregivers
 export const caregiverNavItems: NavItem[] = [];

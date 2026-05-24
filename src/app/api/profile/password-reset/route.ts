@@ -20,7 +20,7 @@ export async function POST() {
     }
 
     const { error } = await usersPasswordResetCreate({
-        path: { user_id: userId },
+        path: { userId },
         headers: { Authorization: `Bearer ${accessToken}` },
     });
 

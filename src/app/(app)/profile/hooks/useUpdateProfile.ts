@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 interface UpdateProfilePayload {
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
 }
 
 interface UseUpdateProfileReturn {

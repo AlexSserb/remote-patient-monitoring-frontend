@@ -33,7 +33,7 @@ function formatDate(isoString: string): string {
 function latestMessage(members: ChatGroupMember[]): string | null {
     return (
         members
-            .map(m => m.last_message_at)
+            .map(m => m.lastMessageAt)
             .filter((d): d is string => Boolean(d))
             .sort()
             .at(-1) ?? null
@@ -57,22 +57,22 @@ function MemberRow({ member, roleLabel, onClick }: MemberRowProps) {
                 <Avatar
                     radius="xl"
                     color="blue">
-                    {getInitials(member.first_name, member.last_name)}
+                    {getInitials(member.firstName, member.lastName)}
                 </Avatar>
                 <div>
                     <Text fw={500}>
-                        {member.first_name} {member.last_name}
+                        {member.firstName} {member.lastName}
                     </Text>
                     <Text
                         size="xs"
                         c="dimmed">
                         {roleLabel}
                     </Text>
-                    {member.last_message_at && (
+                    {member.lastMessageAt && (
                         <Text
                             size="xs"
                             c="dimmed">
-                            {formatDate(member.last_message_at)}
+                            {formatDate(member.lastMessageAt)}
                         </Text>
                     )}
                 </div>
@@ -121,7 +121,7 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
     // Expanded group: show patient + all other members individually
     if (selectedGroup) {
         const { patient } = selectedGroup;
-        const patientName = `${patient.first_name} ${patient.last_name}`;
+        const patientName = `${patient.firstName} ${patient.lastName}`;
         const doctors = currentUserRole === "caregiver" ? (selectedGroup as CaregiverChatGroup).doctors : [];
         const { caregivers } = selectedGroup;
 
@@ -132,10 +132,10 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
                     member={member}
                     roleLabel={roleLabel}
                     onClick={() =>
-                        member.chat_id !== null &&
+                        member.chatId !== null &&
                         onSelectChat({
-                            chatId: member.chat_id,
-                            name: `${member.first_name} ${member.last_name}`,
+                            chatId: member.chatId,
+                            name: `${member.firstName} ${member.lastName}`,
                             roleLabel,
                             patientName,
                         })
@@ -166,8 +166,8 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
                         member={patient}
                         roleLabel="Пациент"
                         onClick={() =>
-                            patient.chat_id !== null &&
-                            onSelectChat({ chatId: patient.chat_id, name: patientName, roleLabel: "Пациент" })
+                            patient.chatId !== null &&
+                            onSelectChat({ chatId: patient.chatId, name: patientName, roleLabel: "Пациент" })
                         }
                     />
                     {doctors.map(member => renderMemberRow(member, DOCTOR_LABEL))}
@@ -192,7 +192,7 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
             {groups.map(group => {
                 const { patient, caregivers } = group;
                 const doctors = currentUserRole === "caregiver" ? (group as CaregiverChatGroup).doctors : [];
-                const patientName = `${patient.first_name} ${patient.last_name}`;
+                const patientName = `${patient.firstName} ${patient.lastName}`;
                 const last = latestMessage([patient, ...doctors, ...caregivers]);
                 return (
                     <UnstyledButton
@@ -205,7 +205,7 @@ export function GroupedChatList({ currentUserRole, onSelectChat }: GroupedChatLi
                             <Avatar
                                 radius="xl"
                                 color="teal">
-                                {getInitials(patient.first_name, patient.last_name)}
+                                {getInitials(patient.firstName, patient.lastName)}
                             </Avatar>
                             <div>
                                 <Text fw={500}>Группа: {patientName}</Text>

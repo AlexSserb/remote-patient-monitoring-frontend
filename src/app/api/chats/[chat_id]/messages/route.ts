@@ -31,7 +31,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const beforeId = beforeIdParam ? Number(beforeIdParam) : undefined;
 
     const { data, error } = await chatsMessagesRetrieve({
-        path: { chat_id: chatId },
+        path: { chatId },
         query: beforeId !== undefined ? { before_id: beforeId } : undefined,
         headers: { Authorization: `Bearer ${accessToken}` },
     });

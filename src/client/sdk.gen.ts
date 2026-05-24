@@ -21,6 +21,56 @@ import type {
     ChatsMessagesRetrieveData,
     ChatsMessagesRetrieveErrors,
     ChatsMessagesRetrieveResponses,
+    DiagnosesAnalyticsRetrieveData,
+    DiagnosesAnalyticsRetrieveErrors,
+    DiagnosesAnalyticsRetrieveResponses,
+    DiagnosesDiaryEntriesCreateData,
+    DiagnosesDiaryEntriesCreateErrors,
+    DiagnosesDiaryEntriesCreateResponses,
+    DiagnosesDiaryEntriesDestroyData,
+    DiagnosesDiaryEntriesDestroyErrors,
+    DiagnosesDiaryEntriesDestroyResponses,
+    DiagnosesDiaryEntriesListData,
+    DiagnosesDiaryEntriesListErrors,
+    DiagnosesDiaryEntriesListResponses,
+    DiagnosesDiaryEntriesPartialUpdateData,
+    DiagnosesDiaryEntriesPartialUpdateErrors,
+    DiagnosesDiaryEntriesPartialUpdateResponses,
+    DiagnosesDiaryFieldsListData,
+    DiagnosesDiaryFieldsListErrors,
+    DiagnosesDiaryFieldsListResponses,
+    DiagnosesListData,
+    DiagnosesListErrors,
+    DiagnosesListResponses,
+    NotificationsEmailSubscriptionCreateData,
+    NotificationsEmailSubscriptionCreateResponses,
+    NotificationsEmailSubscriptionDestroyData,
+    NotificationsEmailSubscriptionDestroyResponses,
+    NotificationsEmailSubscriptionRetrieveData,
+    NotificationsEmailSubscriptionRetrieveResponses,
+    NotificationsInAppReadAllCreateData,
+    NotificationsInAppReadAllCreateResponses,
+    NotificationsInAppReadPartialUpdateData,
+    NotificationsInAppReadPartialUpdateErrors,
+    NotificationsInAppReadPartialUpdateResponses,
+    NotificationsInAppRetrieveData,
+    NotificationsInAppRetrieveResponses,
+    NotificationsPushSubscriptionCreateData,
+    NotificationsPushSubscriptionCreateErrors,
+    NotificationsPushSubscriptionCreateResponses,
+    NotificationsPushSubscriptionDestroyData,
+    NotificationsPushSubscriptionDestroyResponses,
+    NotificationsSchedulesCreateData,
+    NotificationsSchedulesCreateErrors,
+    NotificationsSchedulesCreateResponses,
+    NotificationsSchedulesListData,
+    NotificationsSchedulesListErrors,
+    NotificationsSchedulesListResponses,
+    NotificationsSchedulesPartialUpdateData,
+    NotificationsSchedulesPartialUpdateErrors,
+    NotificationsSchedulesPartialUpdateResponses,
+    NotificationsVapidPublicKeyRetrieveData,
+    NotificationsVapidPublicKeyRetrieveResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -29,6 +79,10 @@ import type {
     UsersAuthTokenRefreshCreateResponses,
     UsersAuthVerifyOtpCreateData,
     UsersAuthVerifyOtpCreateResponses,
+    UsersCaregiversListData,
+    UsersCaregiversListResponses,
+    UsersDoctorsListData,
+    UsersDoctorsListResponses,
     UsersEmailChangeCreateData,
     UsersEmailChangeCreateErrors,
     UsersEmailChangeCreateResponses,
@@ -47,6 +101,9 @@ import type {
     UsersPatientsListData,
     UsersPatientsListErrors,
     UsersPatientsListResponses,
+    UsersPatientsPartialUpdateData,
+    UsersPatientsPartialUpdateErrors,
+    UsersPatientsPartialUpdateResponses,
     UsersRetrieveData,
     UsersRetrieveErrors,
     UsersRetrieveResponses,
@@ -94,7 +151,7 @@ export const chatsMessagesRetrieve = <ThrowOnError extends boolean = false>(
     (options.client ?? client).get<ChatsMessagesRetrieveResponses, ChatsMessagesRetrieveErrors, ThrowOnError>({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/chats/{chat_id}/messages/",
+        url: "/api/chats/{chatId}/messages/",
         ...options,
     });
 
@@ -108,7 +165,7 @@ export const chatsMessagesDestroy = <ThrowOnError extends boolean = false>(
 ) =>
     (options.client ?? client).delete<ChatsMessagesDestroyResponses, ChatsMessagesDestroyErrors, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/chats/{chat_id}/messages/{message_id}/",
+        url: "/api/chats/{chatId}/messages/{messageId}/",
         ...options,
     });
 
@@ -127,7 +184,7 @@ export const chatsMessagesEditPartialUpdate = <ThrowOnError extends boolean = fa
     >({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/chats/{chat_id}/messages/{message_id}/edit/",
+        url: "/api/chats/{chatId}/messages/{messageId}/edit/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -166,6 +223,334 @@ export const chatsDoctorGroupsList = <ThrowOnError extends boolean = false>(
     });
 
 /**
+ * Список диагнозов
+ *
+ * Возвращает все диагнозы системы для использования в фильтрах.
+ */
+export const diagnosesList = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<DiagnosesListResponses, DiagnosesListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/",
+        ...options,
+    });
+
+/**
+ * Аналитика дневниковых метрик пациента
+ *
+ * Возвращает числовые метрики пациента и точки данных за выбранный период.
+ */
+export const diagnosesAnalyticsRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesAnalyticsRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<
+        DiagnosesAnalyticsRetrieveResponses,
+        DiagnosesAnalyticsRetrieveErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/analytics/",
+        ...options,
+    });
+
+/**
+ * Список записей дневника
+ *
+ * Возвращает все записи дневника пациента в обратном хронологическом порядке.
+ */
+export const diagnosesDiaryEntriesList = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesDiaryEntriesListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<DiagnosesDiaryEntriesListResponses, DiagnosesDiaryEntriesListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/",
+        ...options,
+    });
+
+/**
+ * Создание записи дневника
+ *
+ * Создаёт новую запись дневника с переданным набором значений метрик.
+ */
+export const diagnosesDiaryEntriesCreate = <ThrowOnError extends boolean = false>(
+    options: Options<DiagnosesDiaryEntriesCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        DiagnosesDiaryEntriesCreateResponses,
+        DiagnosesDiaryEntriesCreateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Удаление записи дневника
+ *
+ * Удаляет запись дневника вместе со всеми её значениями метрик.
+ */
+export const diagnosesDiaryEntriesDestroy = <ThrowOnError extends boolean = false>(
+    options: Options<DiagnosesDiaryEntriesDestroyData, ThrowOnError>
+) =>
+    (options.client ?? client).delete<
+        DiagnosesDiaryEntriesDestroyResponses,
+        DiagnosesDiaryEntriesDestroyErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/{id}/",
+        ...options,
+    });
+
+/**
+ * Обновление записи дневника
+ *
+ * Заменяет значения метрик в существующей записи дневника через upsert.
+ */
+export const diagnosesDiaryEntriesPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<DiagnosesDiaryEntriesPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        DiagnosesDiaryEntriesPartialUpdateResponses,
+        DiagnosesDiaryEntriesPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-entries/{id}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Поля дневника для пациента
+ *
+ * Возвращает уникальные поля дневника, агрегированные по всем диагнозам пациента.
+ */
+export const diagnosesDiaryFieldsList = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesDiaryFieldsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<DiagnosesDiaryFieldsListResponses, DiagnosesDiaryFieldsListErrors, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-fields/",
+        ...options,
+    });
+
+/**
+ * Отключить email-уведомления
+ *
+ * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsEmailSubscriptionDestroy = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsEmailSubscriptionDestroyData, ThrowOnError>
+) =>
+    (options?.client ?? client).delete<NotificationsEmailSubscriptionDestroyResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Статус email-уведомлений текущего пользователя
+ *
+ * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsEmailSubscriptionRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsEmailSubscriptionRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsEmailSubscriptionRetrieveResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Включить email-уведомления
+ *
+ * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsEmailSubscriptionCreate = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsEmailSubscriptionCreateData, ThrowOnError>
+) =>
+    (options?.client ?? client).post<NotificationsEmailSubscriptionCreateResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/email-subscription/",
+        ...options,
+    });
+
+/**
+ * Список in-app уведомлений текущего пользователя
+ *
+ * Возвращает пагинированный список in-app уведомлений с количеством непрочитанных.
+ */
+export const notificationsInAppRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsInAppRetrieveResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app/",
+        ...options,
+    });
+
+/**
+ * Пометить in-app уведомление прочитанным
+ *
+ * Переводит одно in-app уведомление в статус «прочитано».
+ */
+export const notificationsInAppReadPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsInAppReadPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        NotificationsInAppReadPartialUpdateResponses,
+        NotificationsInAppReadPartialUpdateErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app/{notificationId}/read/",
+        ...options,
+    });
+
+/**
+ * Пометить все in-app уведомления прочитанными
+ *
+ * Переводит все непрочитанные in-app уведомления пользователя в статус «прочитано».
+ */
+export const notificationsInAppReadAllCreate = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppReadAllCreateData, ThrowOnError>
+) =>
+    (options?.client ?? client).post<NotificationsInAppReadAllCreateResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app/read-all/",
+        ...options,
+    });
+
+/**
+ * Отключить web push подписку
+ *
+ * Сохраняет push-подписку браузера или деактивирует её для текущего пользователя.
+ */
+export const notificationsPushSubscriptionDestroy = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsPushSubscriptionDestroyData, ThrowOnError>
+) =>
+    (options?.client ?? client).delete<NotificationsPushSubscriptionDestroyResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/push-subscription/",
+        ...options,
+    });
+
+/**
+ * Сохранить web push подписку
+ *
+ * Сохраняет push-подписку браузера или деактивирует её для текущего пользователя.
+ */
+export const notificationsPushSubscriptionCreate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsPushSubscriptionCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        NotificationsPushSubscriptionCreateResponses,
+        NotificationsPushSubscriptionCreateErrors,
+        ThrowOnError
+    >({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/push-subscription/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Список расписаний уведомлений для пациента
+ *
+ * Возвращает расписания для пациента или создаёт расписание для текущего пользователя.
+ */
+export const notificationsSchedulesList = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsSchedulesListData, ThrowOnError>
+) =>
+    (options.client ?? client).get<NotificationsSchedulesListResponses, NotificationsSchedulesListErrors, ThrowOnError>(
+        {
+            responseType: "json",
+            security: [{ scheme: "bearer", type: "http" }],
+            url: "/api/notifications/schedules/",
+            ...options,
+        }
+    );
+
+/**
+ * Создать или обновить расписание уведомлений
+ *
+ * Возвращает расписания для пациента или создаёт расписание для текущего пользователя.
+ */
+export const notificationsSchedulesCreate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsSchedulesCreateData, ThrowOnError>
+) =>
+    (options.client ?? client).post<
+        NotificationsSchedulesCreateResponses,
+        NotificationsSchedulesCreateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/schedules/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Обновить параметры расписания уведомлений
+ *
+ * Обновляет дни, время и статус активности расписания уведомлений.
+ */
+export const notificationsSchedulesPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<NotificationsSchedulesPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        NotificationsSchedulesPartialUpdateResponses,
+        NotificationsSchedulesPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/schedules/{scheduleId}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+/**
+ * Публичный VAPID-ключ для web push
+ *
+ * Возвращает публичный VAPID-ключ для создания push-подписки в браузере.
+ */
+export const notificationsVapidPublicKeyRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsVapidPublicKeyRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsVapidPublicKeyRetrieveResponses, unknown, ThrowOnError>({
+        url: "/api/notifications/vapid-public-key/",
+        ...options,
+    });
+
+/**
  * Профиль пользователя
  *
  * Возвращает или обновляет профиль пользователя; доступен только владельцу аккаунта.
@@ -176,7 +561,7 @@ export const usersRetrieve = <ThrowOnError extends boolean = false>(
     (options.client ?? client).get<UsersRetrieveResponses, UsersRetrieveErrors, ThrowOnError>({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/",
+        url: "/api/users/{userId}/",
         ...options,
     });
 
@@ -191,7 +576,7 @@ export const usersPartialUpdate = <ThrowOnError extends boolean = false>(
     (options.client ?? client).patch<UsersPartialUpdateResponses, UsersPartialUpdateErrors, ThrowOnError>({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/",
+        url: "/api/users/{userId}/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -209,7 +594,7 @@ export const usersEmailChangeCreate = <ThrowOnError extends boolean = false>(
 ) =>
     (options.client ?? client).post<UsersEmailChangeCreateResponses, UsersEmailChangeCreateErrors, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/email-change/",
+        url: "/api/users/{userId}/email-change/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -232,7 +617,7 @@ export const usersEmailChangeVerifyCreate = <ThrowOnError extends boolean = fals
     >({
         responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/email-change/verify/",
+        url: "/api/users/{userId}/email-change/verify/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -250,7 +635,7 @@ export const usersPasswordResetCreate = <ThrowOnError extends boolean = false>(
 ) =>
     (options.client ?? client).post<UsersPasswordResetCreateResponses, UsersPasswordResetCreateErrors, ThrowOnError>({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/password-reset/",
+        url: "/api/users/{userId}/password-reset/",
         ...options,
     });
 
@@ -268,7 +653,7 @@ export const usersPasswordResetVerifyCreate = <ThrowOnError extends boolean = fa
         ThrowOnError
     >({
         security: [{ scheme: "bearer", type: "http" }],
-        url: "/api/users/{user_id}/password-reset/verify/",
+        url: "/api/users/{userId}/password-reset/verify/",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -277,7 +662,7 @@ export const usersPasswordResetVerifyCreate = <ThrowOnError extends boolean = fa
     });
 
 /**
- * Шаг 1 — вход по email и паролю
+ * Шаг 1. Вход по email и паролю
  *
  * Принимает email и пароль, отправляет OTP на почту, возвращает pre_auth_token.
  */
@@ -331,7 +716,7 @@ export const usersAuthTokenRefreshCreate = <ThrowOnError extends boolean = false
     });
 
 /**
- * Шаг 2 — подтверждение OTP
+ * Шаг 2. Подтверждение OTP
  *
  * Принимает pre_auth_token и OTP, возвращает JWT access и refresh токены.
  */
@@ -349,6 +734,36 @@ export const usersAuthVerifyOtpCreate = <ThrowOnError extends boolean = false>(
     });
 
 /**
+ * Список опекунов
+ *
+ * Возвращает всех опекунов системы для использования в фильтрах.
+ */
+export const usersCaregiversList = <ThrowOnError extends boolean = false>(
+    options?: Options<UsersCaregiversListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<UsersCaregiversListResponses, unknown, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/caregivers/",
+        ...options,
+    });
+
+/**
+ * Список докторов
+ *
+ * Возвращает всех докторов системы для использования в фильтрах.
+ */
+export const usersDoctorsList = <ThrowOnError extends boolean = false>(
+    options?: Options<UsersDoctorsListData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<UsersDoctorsListResponses, unknown, ThrowOnError>({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/doctors/",
+        ...options,
+    });
+
+/**
  * Список пациентов
  *
  * Возвращает постраничный список пациентов с количеством опекунов для доктора или опекуна.
@@ -361,4 +776,27 @@ export const usersPatientsList = <ThrowOnError extends boolean = false>(
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/users/patients/",
         ...options,
+    });
+
+/**
+ * Редактирование пациента доктором
+ *
+ * Обновляет диагнозы и список докторов пациента; доступно только прикреплённому доктору.
+ */
+export const usersPatientsPartialUpdate = <ThrowOnError extends boolean = false>(
+    options: Options<UsersPatientsPartialUpdateData, ThrowOnError>
+) =>
+    (options.client ?? client).patch<
+        UsersPatientsPartialUpdateResponses,
+        UsersPatientsPartialUpdateErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/users/patients/{patientId}/",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
     });

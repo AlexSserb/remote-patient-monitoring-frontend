@@ -17,9 +17,9 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
     const { requestChange, verifyChange, isLoading, error, resetError } = useEmailChange();
 
     const emailForm = useForm({
-        initialValues: { new_email: "" },
+        initialValues: { newEmail: "" },
         validate: {
-            new_email: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
+            newEmail: v => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : "Введите корректный email"),
         },
     });
 
@@ -30,10 +30,10 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
         onClose();
     }
 
-    function handleEmailSubmit(values: { new_email: string }) {
-        requestChange(values.new_email).then(ok => {
+    function handleEmailSubmit(values: { newEmail: string }) {
+        requestChange(values.newEmail).then(ok => {
             if (ok) {
-                setPendingEmail(values.new_email);
+                setPendingEmail(values.newEmail);
                 setStep("otp");
             }
         });
@@ -61,7 +61,7 @@ export function EmailChangeModal({ opened, onClose, onSuccess }: EmailChangeModa
                             label="Новый email"
                             type="email"
                             placeholder="example@mail.com"
-                            {...emailForm.getInputProps("new_email")}
+                            {...emailForm.getInputProps("newEmail")}
                         />
                         {error && (
                             <Text

@@ -14,7 +14,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
         try {
             const payload = decodeJwtPayload(accessToken);
             const { data: profile } = await usersRetrieve({
-                path: { user_id: payload.user_id },
+                path: { userId: payload.user_id },
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
             role = profile?.role;

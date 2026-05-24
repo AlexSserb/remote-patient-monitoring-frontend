@@ -6,6 +6,7 @@ import { Avatar, Badge, Button, Card, Container, Divider, Group, Stack, Text, Ti
 import { useDisclosure } from "@mantine/hooks";
 import type { RoleEnum, UserProfile } from "@/client/types.gen";
 import { useAuth } from "@/contexts/AuthContext";
+import { NotificationSettingsModal } from "@/components/notifications/NotificationSettingsModal";
 import { EditNameModal } from "./EditNameModal";
 import { EmailChangeModal } from "./EmailChangeModal";
 import { PasswordResetModal } from "./PasswordResetModal";
@@ -27,6 +28,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
     const [editNameOpened, { open: openEditName, close: closeEditName }] = useDisclosure(false);
     const [emailChangeOpened, { open: openEmailChange, close: closeEmailChange }] = useDisclosure(false);
     const [passwordResetOpened, { open: openPasswordReset, close: closePasswordReset }] = useDisclosure(false);
+    const [notifOpened, { open: openNotif, close: closeNotif }] = useDisclosure(false);
 
     function handleLogout() {
         setIsLoggingOut(true);
@@ -38,15 +40,15 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
         router.refresh();
     }
 
-    const initials = [profile.first_name[0], profile.last_name[0]].filter(Boolean).join("").toUpperCase();
+    const initials = [profile.firstName[0], profile.lastName[0]].filter(Boolean).join("").toUpperCase();
 
-    const fullName = `${profile.first_name} ${profile.last_name}`.trim();
+    const fullName = `${profile.firstName} ${profile.lastName}`.trim();
 
     const dateJoined = new Intl.DateTimeFormat("ru-RU", {
         day: "numeric",
         month: "long",
         year: "numeric",
-    }).format(new Date(profile.date_joined));
+    }).format(new Date(profile.dateJoined));
 
     return (
         <>
@@ -124,6 +126,15 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                             onClick={openPasswordReset}>
                             Сменить пароль
                         </Button>
+                        {profile.role === "patient" && (
+                            <Button
+                                variant="light"
+                                color="teal"
+                                fullWidth
+                                onClick={openNotif}>
+                                Уведомления
+                            </Button>
+                        )}
                         <Button
                             variant="outline"
                             color="red"
@@ -138,8 +149,8 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
 
             <EditNameModal
                 opened={editNameOpened}
-                firstName={profile.first_name}
-                lastName={profile.last_name}
+                firstName={profile.firstName}
+                lastName={profile.lastName}
                 onClose={closeEditName}
                 onSuccess={handleUpdateSuccess}
             />
@@ -153,6 +164,14 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
             <PasswordResetModal
                 opened={passwordResetOpened}
                 onClose={closePasswordReset}
+            />
+
+            <NotificationSettingsModal
+                opened={notifOpened}
+                onClose={closeNotif}
+                patientId={profile.role === "patient" ? profile.id : null}
+                patientName={profile.role === "patient" ? fullName : undefined}
+                viewerRole={profile.role}
             />
         </>
     );

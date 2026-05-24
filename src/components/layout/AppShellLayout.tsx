@@ -5,6 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { AppHeader } from "./AppHeader";
 import { MobileNavbar } from "./MobileNavbar";
 import { ChatDrawer } from "@/components/chats/ChatDrawer";
+import { useInAppNotifications } from "@/components/notifications/hooks/useInAppNotifications";
 import type { UserRole } from "@/lib/navigation";
 
 interface AppShellLayoutProps {
@@ -15,6 +16,7 @@ interface AppShellLayoutProps {
 export function AppShellLayout({ children, role }: AppShellLayoutProps) {
     const [navOpened, { toggle: toggleNav, close: closeNav }] = useDisclosure();
     const [chatOpened, { open: openChat, close: closeChat }] = useDisclosure();
+    const inAppNotifications = useInAppNotifications();
 
     return (
         <>
@@ -30,6 +32,8 @@ export function AppShellLayout({ children, role }: AppShellLayoutProps) {
                         opened={navOpened}
                         onToggle={toggleNav}
                         onChatOpen={openChat}
+                        role={role}
+                        inAppNotifications={inAppNotifications}
                     />
                 </AppShell.Header>
 
@@ -38,6 +42,7 @@ export function AppShellLayout({ children, role }: AppShellLayoutProps) {
                         role={role}
                         onClose={closeNav}
                         onChatOpen={openChat}
+                        unreadNotificationsCount={inAppNotifications.unreadCount}
                     />
                 </AppShell.Navbar>
 

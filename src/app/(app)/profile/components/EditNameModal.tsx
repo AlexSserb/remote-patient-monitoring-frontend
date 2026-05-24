@@ -17,28 +17,30 @@ export function EditNameModal({ opened, firstName, lastName, onClose, onSuccess 
     const { updateProfile, isLoading, error } = useUpdateProfile();
 
     const form = useForm({
-        initialValues: { first_name: firstName, last_name: lastName },
+        initialValues: { firstName, lastName },
         validate: {
-            first_name: v => (v.trim().length === 0 ? "Введите имя" : null),
-            last_name: v => (v.trim().length === 0 ? "Введите фамилию" : null),
+            firstName: v => (v.trim().length === 0 ? "Введите имя" : null),
+            lastName: v => (v.trim().length === 0 ? "Введите фамилию" : null),
         },
     });
 
     // Sync form values when modal opens with fresh data
     useEffect(() => {
         if (opened) {
-            form.setValues({ first_name: firstName, last_name: lastName });
+            form.setValues({ firstName, lastName });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [opened, firstName, lastName]);
 
     function handleSubmit(values: typeof form.values) {
-        updateProfile(values).then(ok => {
-            if (ok) {
-                onSuccess();
-                onClose();
-            }
-        });
+        updateProfile(values)
+            .then(ok => {
+                if (ok) {
+                    onSuccess();
+                    onClose();
+                }
+            })
+            .catch(err => console.error(err));
     }
 
     return (
@@ -51,11 +53,11 @@ export function EditNameModal({ opened, firstName, lastName, onClose, onSuccess 
                 <Stack gap="sm">
                     <TextInput
                         label="Имя"
-                        {...form.getInputProps("first_name")}
+                        {...form.getInputProps("firstName")}
                     />
                     <TextInput
                         label="Фамилия"
-                        {...form.getInputProps("last_name")}
+                        {...form.getInputProps("lastName")}
                     />
                     {error && (
                         <Text
