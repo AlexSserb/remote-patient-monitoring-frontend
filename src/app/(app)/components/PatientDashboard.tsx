@@ -8,6 +8,7 @@ import { DiaryForm } from "./DiaryForm";
 import { DiaryEntriesList } from "./DiaryEntriesList";
 import { useDiaryFields } from "../hooks/useDiaryFields";
 import { useDiaryEntries } from "../hooks/useDiaryEntries";
+import { usePatientStreak } from "../hooks/usePatientStreak";
 import type { DiaryEntryInfo } from "@/client/types.gen";
 
 interface PatientDashboardProps {
@@ -21,6 +22,7 @@ export function PatientDashboard({ patientId }: PatientDashboardProps = {}) {
 
     const { fields, isLoading: fieldsLoading, error: fieldsError } = useDiaryFields(patientId);
     const { entries, isLoading: entriesLoading, error: entriesError } = useDiaryEntries(refreshKey, patientId);
+    const { streak } = usePatientStreak(patientId, refreshKey);
 
     function handleSubmitSuccess() {
         setEditingEntry(null);
@@ -87,6 +89,7 @@ export function PatientDashboard({ patientId }: PatientDashboardProps = {}) {
                         selectedEntryId={editingEntry?.id ?? null}
                         onSelect={setEditingEntry}
                         onDelete={handleDelete}
+                        streak={streak}
                     />
                 </ScrollArea>
             </Grid.Col>
