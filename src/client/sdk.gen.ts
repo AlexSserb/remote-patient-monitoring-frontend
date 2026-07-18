@@ -39,6 +39,9 @@ import type {
     DiagnosesDiaryFieldsListData,
     DiagnosesDiaryFieldsListErrors,
     DiagnosesDiaryFieldsListResponses,
+    DiagnosesDiaryStreakRetrieveData,
+    DiagnosesDiaryStreakRetrieveErrors,
+    DiagnosesDiaryStreakRetrieveResponses,
     DiagnosesListData,
     DiagnosesListErrors,
     DiagnosesListResponses,
@@ -55,6 +58,12 @@ import type {
     NotificationsInAppReadPartialUpdateResponses,
     NotificationsInAppRetrieveData,
     NotificationsInAppRetrieveResponses,
+    NotificationsInAppSubscriptionCreateData,
+    NotificationsInAppSubscriptionCreateResponses,
+    NotificationsInAppSubscriptionDestroyData,
+    NotificationsInAppSubscriptionDestroyResponses,
+    NotificationsInAppSubscriptionRetrieveData,
+    NotificationsInAppSubscriptionRetrieveResponses,
     NotificationsPushSubscriptionCreateData,
     NotificationsPushSubscriptionCreateErrors,
     NotificationsPushSubscriptionCreateResponses,
@@ -71,6 +80,12 @@ import type {
     NotificationsSchedulesPartialUpdateResponses,
     NotificationsVapidPublicKeyRetrieveData,
     NotificationsVapidPublicKeyRetrieveResponses,
+    NotificationsVkSubscriptionDestroyData,
+    NotificationsVkSubscriptionDestroyResponses,
+    NotificationsVkSubscriptionGenerateTokenCreateData,
+    NotificationsVkSubscriptionGenerateTokenCreateResponses,
+    NotificationsVkSubscriptionRetrieveData,
+    NotificationsVkSubscriptionRetrieveResponses,
     UsersAuthLoginCreateData,
     UsersAuthLoginCreateResponses,
     UsersAuthLogoutCreateData,
@@ -351,6 +366,25 @@ export const diagnosesDiaryFieldsList = <ThrowOnError extends boolean = false>(
     });
 
 /**
+ * Серия подряд идущих дней ведения дневника пациента
+ *
+ * Возвращает серию пациента; для доктора и опекуна требует patient_id.
+ */
+export const diagnosesDiaryStreakRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<DiagnosesDiaryStreakRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<
+        DiagnosesDiaryStreakRetrieveResponses,
+        DiagnosesDiaryStreakRetrieveErrors,
+        ThrowOnError
+    >({
+        responseType: "json",
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/diagnoses/diary-streak/",
+        ...options,
+    });
+
+/**
  * Отключить email-уведомления
  *
  * Возвращает статус или меняет активность email-уведомлений; user_id позволяет управлять настройками пациента.
@@ -401,8 +435,51 @@ export const notificationsInAppRetrieve = <ThrowOnError extends boolean = false>
     options?: Options<NotificationsInAppRetrieveData, ThrowOnError>
 ) =>
     (options?.client ?? client).get<NotificationsInAppRetrieveResponses, unknown, ThrowOnError>({
+        responseType: "json",
         security: [{ scheme: "bearer", type: "http" }],
         url: "/api/notifications/in-app/",
+        ...options,
+    });
+
+/**
+ * Отключить in-app уведомления
+ *
+ * Возвращает статус или меняет активность in-app уведомлений; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsInAppSubscriptionDestroy = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppSubscriptionDestroyData, ThrowOnError>
+) =>
+    (options?.client ?? client).delete<NotificationsInAppSubscriptionDestroyResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app-subscription/",
+        ...options,
+    });
+
+/**
+ * Статус in-app уведомлений текущего пользователя
+ *
+ * Возвращает статус или меняет активность in-app уведомлений; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsInAppSubscriptionRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppSubscriptionRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsInAppSubscriptionRetrieveResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app-subscription/",
+        ...options,
+    });
+
+/**
+ * Включить in-app уведомления
+ *
+ * Возвращает статус или меняет активность in-app уведомлений; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsInAppSubscriptionCreate = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsInAppSubscriptionCreateData, ThrowOnError>
+) =>
+    (options?.client ?? client).post<NotificationsInAppSubscriptionCreateResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/in-app-subscription/",
         ...options,
     });
 
@@ -547,6 +624,48 @@ export const notificationsVapidPublicKeyRetrieve = <ThrowOnError extends boolean
 ) =>
     (options?.client ?? client).get<NotificationsVapidPublicKeyRetrieveResponses, unknown, ThrowOnError>({
         url: "/api/notifications/vapid-public-key/",
+        ...options,
+    });
+
+/**
+ * Отключить VK-уведомления
+ *
+ * Возвращает статус VK-канала или отключает его; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsVkSubscriptionDestroy = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsVkSubscriptionDestroyData, ThrowOnError>
+) =>
+    (options?.client ?? client).delete<NotificationsVkSubscriptionDestroyResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/vk-subscription/",
+        ...options,
+    });
+
+/**
+ * Статус VK-уведомлений пользователя
+ *
+ * Возвращает статус VK-канала или отключает его; user_id позволяет управлять настройками пациента.
+ */
+export const notificationsVkSubscriptionRetrieve = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsVkSubscriptionRetrieveData, ThrowOnError>
+) =>
+    (options?.client ?? client).get<NotificationsVkSubscriptionRetrieveResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/vk-subscription/",
+        ...options,
+    });
+
+/**
+ * Сгенерировать токен для привязки VK-аккаунта
+ *
+ * Генерирует токен для пользователя (или пациента по user_id) для отправки команды /connect TOKEN.
+ */
+export const notificationsVkSubscriptionGenerateTokenCreate = <ThrowOnError extends boolean = false>(
+    options?: Options<NotificationsVkSubscriptionGenerateTokenCreateData, ThrowOnError>
+) =>
+    (options?.client ?? client).post<NotificationsVkSubscriptionGenerateTokenCreateResponses, unknown, ThrowOnError>({
+        security: [{ scheme: "bearer", type: "http" }],
+        url: "/api/notifications/vk-subscription/generate-token/",
         ...options,
     });
 

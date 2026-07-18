@@ -1,0 +1,13 @@
+[2026-06-11T14:14:17.388Z] Error: Request failed with status 500: fetch failed
+Stack:
+Error: Request failed with status 500: fetch failed
+    at getSpecData (file:///home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/@hey-api/openapi-ts/dist/src-BzTu1krN.mjs:68:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Promise.all (index 0)
+    at async createClient$1 (file:///home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/@hey-api/openapi-ts/dist/src-BzTu1krN.mjs:75:20)
+    at async file:///home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/@hey-api/openapi-ts/dist/src-BzTu1krN.mjs:193:12
+    at async Promise.all (index 0)
+    at async createClient (file:///home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/@hey-api/openapi-ts/dist/src-BzTu1krN.mjs:191:21)
+    at async Command.<anonymous> (file:///home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/@hey-api/openapi-ts/dist/run.mjs:39:8)
+    at async Command.parseAsync (/home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/commander/lib/command.js:1122:5)
+    at async runCli (file:///home/aserbin/WebstormProjects/remote-patient-monitoring-frontend/node_modules/@hey-api/openapi-ts/dist/run.mjs:43:3)
