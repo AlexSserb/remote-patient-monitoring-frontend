@@ -22,7 +22,8 @@ import {
 } from "@mantine/core";
 import { IconBell } from "@tabler/icons-react";
 import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
-import type { PatientListItem, RoleEnum } from "@/client/types.gen";
+import type { PatientListItem, PatientStreak, RoleEnum } from "@/client/types.gen";
+import { StreakBadge } from "@/components/StreakBadge";
 import { type HasCaregiverFilter, usePatientsPage } from "../hooks/usePatientsPage";
 import { useCaregiversOptions, useDiagnosesOptions, useDoctorsOptions } from "../hooks/useFilterOptions";
 import { NameListCell } from "./NameListCell";
@@ -196,6 +197,12 @@ export function PatientsTable({ role }: PatientsTableProps) {
                     />
                 </Table.Td>
                 <Table.Td>{dateJoined}</Table.Td>
+                <Table.Td>
+                    <StreakBadge
+                        streak={patient.streak as PatientStreak | null}
+                        size="sm"
+                    />
+                </Table.Td>
                 {role === "doctor" && (
                     <Table.Td>
                         <Group gap="xs">
@@ -385,6 +392,7 @@ export function PatientsTable({ role }: PatientsTableProps) {
                                     <Table.Th>Доктора</Table.Th>
                                     <Table.Th>Опекуны</Table.Th>
                                     <Table.Th>Дата регистрации</Table.Th>
+                                    <Table.Th>Серия</Table.Th>
                                     {role === "doctor" && <Table.Th />}
                                     {role === "caregiver" && <Table.Th />}
                                 </Table.Tr>

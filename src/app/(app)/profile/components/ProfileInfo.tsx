@@ -7,6 +7,8 @@ import { useDisclosure } from "@mantine/hooks";
 import type { RoleEnum, UserProfile } from "@/client/types.gen";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationSettingsModal } from "@/components/notifications/NotificationSettingsModal";
+import { StreakBadge } from "@/components/StreakBadge";
+import { usePatientStreak } from "../../hooks/usePatientStreak";
 import { EditNameModal } from "./EditNameModal";
 import { EmailChangeModal } from "./EmailChangeModal";
 import { PasswordResetModal } from "./PasswordResetModal";
@@ -29,6 +31,8 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
     const [emailChangeOpened, { open: openEmailChange, close: closeEmailChange }] = useDisclosure(false);
     const [passwordResetOpened, { open: openPasswordReset, close: closePasswordReset }] = useDisclosure(false);
     const [notifOpened, { open: openNotif, close: closeNotif }] = useDisclosure(false);
+
+    const { streak } = usePatientStreak(undefined, undefined, profile.role === "patient");
 
     function handleLogout() {
         setIsLoggingOut(true);
@@ -71,6 +75,7 @@ export function ProfileInfo({ profile }: ProfileInfoProps) {
                             {initials}
                         </Avatar>
                         <Title order={3}>{fullName}</Title>
+                        {profile.role === "patient" && <StreakBadge streak={streak} />}
                     </Stack>
 
                     <Divider mb="md" />

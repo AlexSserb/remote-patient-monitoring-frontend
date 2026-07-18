@@ -224,6 +224,39 @@ export type EmailChangeVerify = {
 };
 
 /**
+ * In-app уведомление для отображения в ленте колокольчика на фронтенде.
+ */
+export type InAppNotification = {
+    readonly id: number;
+    /**
+     * Извлекает заголовок уведомления из поля metadata.
+     */
+    readonly title: string;
+    /**
+     * Извлекает текст уведомления из поля metadata.
+     */
+    readonly body: string;
+    /**
+     * Прочитано
+     */
+    isRead?: boolean | null;
+    /**
+     * Отправлено
+     */
+    readonly sentAt: string;
+};
+
+/**
+ * Пагинированный ответ со списком in-app уведомлений и счётчиком непрочитанных.
+ */
+export type InAppNotificationList = {
+    results: Array<InAppNotification>;
+    count: number;
+    unreadCount: number;
+    hasMore: boolean;
+};
+
+/**
  * Превью последнего сообщения для отображения в списке чатов.
  */
 export type LastMessagePreview = {
@@ -408,11 +441,35 @@ export type PatientListItem = {
     diagnoses: Array<PatientDiagnosis>;
     doctors: Array<PatientDoctor>;
     caregivers: Array<PatientCaregiver>;
+    /**
+     * Возвращает данные серии пациента или None, если серия ещё не создавалась.
+     */
+    readonly streak: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type PatientListResponse = {
     count: number;
     results: Array<PatientListItem>;
+};
+
+/**
+ * Серия подряд идущих дней с записью в дневнике состояния пациента.
+ */
+export type PatientStreak = {
+    /**
+     * Текущая серия
+     */
+    currentStreak?: number;
+    /**
+     * Максимальная серия
+     */
+    maxStreak?: number;
+    /**
+     * Дата последней записи
+     */
+    lastEntryDate?: string | null;
 };
 
 /**
@@ -635,6 +692,26 @@ export type DiaryFieldWritable = {
     isRequired: boolean;
     minValue: number | null;
     maxValue: number | null;
+};
+
+/**
+ * In-app уведомление для отображения в ленте колокольчика на фронтенде.
+ */
+export type InAppNotificationWritable = {
+    /**
+     * Прочитано
+     */
+    isRead?: boolean | null;
+};
+
+/**
+ * Пагинированный ответ со списком in-app уведомлений и счётчиком непрочитанных.
+ */
+export type InAppNotificationListWritable = {
+    results: Array<InAppNotificationWritable>;
+    count: number;
+    unreadCount: number;
+    hasMore: boolean;
 };
 
 /**
@@ -1140,6 +1217,40 @@ export type DiagnosesDiaryFieldsListResponses = {
 export type DiagnosesDiaryFieldsListResponse =
     DiagnosesDiaryFieldsListResponses[keyof DiagnosesDiaryFieldsListResponses];
 
+export type DiagnosesDiaryStreakRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * ID пациента — обязателен для доктора и опекуна, игнорируется для пациента
+         */
+        patient_id?: number;
+    };
+    url: "/api/diagnoses/diary-streak/";
+};
+
+export type DiagnosesDiaryStreakRetrieveErrors = {
+    /**
+     * Не передан patient_id (для доктора/опекуна)
+     */
+    400: unknown;
+    /**
+     * Доступ запрещён
+     */
+    403: unknown;
+    /**
+     * Пациент не найден
+     */
+    404: unknown;
+};
+
+export type DiagnosesDiaryStreakRetrieveResponses = {
+    200: PatientStreak;
+};
+
+export type DiagnosesDiaryStreakRetrieveResponse =
+    DiagnosesDiaryStreakRetrieveResponses[keyof DiagnosesDiaryStreakRetrieveResponses];
+
 export type NotificationsEmailSubscriptionDestroyData = {
     body?: never;
     path?: never;
@@ -1205,11 +1316,59 @@ export type NotificationsInAppRetrieveData = {
 };
 
 export type NotificationsInAppRetrieveResponses = {
+    200: InAppNotificationList;
+};
+
+export type NotificationsInAppRetrieveResponse =
+    NotificationsInAppRetrieveResponses[keyof NotificationsInAppRetrieveResponses];
+
+export type NotificationsInAppSubscriptionDestroyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/in-app-subscription/";
+};
+
+export type NotificationsInAppSubscriptionDestroyResponses = {
     /**
-     * {"results": [...], "count": int, "unreadCount": int, "hasMore": bool}
+     * In-app уведомления отключены
+     */
+    204: void;
+};
+
+export type NotificationsInAppSubscriptionDestroyResponse =
+    NotificationsInAppSubscriptionDestroyResponses[keyof NotificationsInAppSubscriptionDestroyResponses];
+
+export type NotificationsInAppSubscriptionRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/in-app-subscription/";
+};
+
+export type NotificationsInAppSubscriptionRetrieveResponses = {
+    /**
+     * {"is_active": bool}
      */
     200: unknown;
 };
+
+export type NotificationsInAppSubscriptionCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/api/notifications/in-app-subscription/";
+};
+
+export type NotificationsInAppSubscriptionCreateResponses = {
+    /**
+     * In-app уведомления включены
+     */
+    204: void;
+};
+
+export type NotificationsInAppSubscriptionCreateResponse =
+    NotificationsInAppSubscriptionCreateResponses[keyof NotificationsInAppSubscriptionCreateResponses];
 
 export type NotificationsInAppReadPartialUpdateData = {
     body?: never;
@@ -1396,6 +1555,57 @@ export type NotificationsVapidPublicKeyRetrieveData = {
 export type NotificationsVapidPublicKeyRetrieveResponses = {
     /**
      * Публичный VAPID-ключ для подписки
+     */
+    200: unknown;
+};
+
+export type NotificationsVkSubscriptionDestroyData = {
+    body?: never;
+    path?: never;
+    query?: {
+        user_id?: number;
+    };
+    url: "/api/notifications/vk-subscription/";
+};
+
+export type NotificationsVkSubscriptionDestroyResponses = {
+    /**
+     * VK-уведомления отключены
+     */
+    204: void;
+};
+
+export type NotificationsVkSubscriptionDestroyResponse =
+    NotificationsVkSubscriptionDestroyResponses[keyof NotificationsVkSubscriptionDestroyResponses];
+
+export type NotificationsVkSubscriptionRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: {
+        user_id?: number;
+    };
+    url: "/api/notifications/vk-subscription/";
+};
+
+export type NotificationsVkSubscriptionRetrieveResponses = {
+    /**
+     * {"is_active": bool}
+     */
+    200: unknown;
+};
+
+export type NotificationsVkSubscriptionGenerateTokenCreateData = {
+    body?: never;
+    path?: never;
+    query?: {
+        user_id?: number;
+    };
+    url: "/api/notifications/vk-subscription/generate-token/";
+};
+
+export type NotificationsVkSubscriptionGenerateTokenCreateResponses = {
+    /**
+     * {"token": str, "expires_in": int}
      */
     200: unknown;
 };

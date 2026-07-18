@@ -4,7 +4,8 @@ import { useState } from "react";
 import { ActionIcon, Alert, Box, Button, Center, Group, Loader, Modal, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPencil, IconPencilOff, IconTrash } from "@tabler/icons-react";
-import type { DiaryEntryInfo } from "@/client/types.gen";
+import type { DiaryEntryInfo, PatientStreak } from "@/client/types.gen";
+import { StreakBadge } from "@/components/StreakBadge";
 
 const DATE_FORMAT = new Intl.DateTimeFormat("ru-RU", {
     day: "numeric",
@@ -21,6 +22,7 @@ interface DiaryEntriesListProps {
     selectedEntryId: number | null;
     onSelect: (entry: DiaryEntryInfo) => void;
     onDelete: (entryId: number) => void;
+    streak?: PatientStreak | null;
 }
 
 function formatValue(
@@ -41,6 +43,7 @@ export function DiaryEntriesList({
     selectedEntryId,
     onSelect,
     onDelete,
+    streak,
 }: DiaryEntriesListProps) {
     const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
     const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
@@ -82,7 +85,12 @@ export function DiaryEntriesList({
             </Modal>
 
             <Stack gap="xs">
-                <Title order={4}>Записи дневника</Title>
+                <Group
+                    justify="space-between"
+                    align="center">
+                    <Title order={4}>Записи дневника</Title>
+                    <StreakBadge streak={streak} />
+                </Group>
 
                 {error && <Alert color="red">{error}</Alert>}
 
